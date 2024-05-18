@@ -17,15 +17,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO build out the retrofit service and reference it here.
-        //  Pass the service in to the CountryInfoScreen composable below.
         val apiService = buildApiService()
         val remoteApi = RemoteApi(apiService)
 
         setContent {
             MyApplicationTheme {
-                // TODO complete the composable content and provide
-                //  models for Country, CountryName, and CountryFlags.
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
