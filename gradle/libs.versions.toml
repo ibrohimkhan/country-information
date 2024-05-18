@@ -15,11 +15,12 @@ androidx-appcompat = "1.6.1"
 compose-integration-constraintlayout = "1.0.1"
 material3 = "1.2.0-alpha06"
 fonts = "1.5.0"
-retrofit="2.9.0"
-moshi="1.14.0"
-coil="2.4.0"
-navigation="2.7.1"
-espresso="3.5.1"
+retrofit = "2.9.0"
+retrofit-logging = "4.10.0"
+moshi = "1.14.0"
+coil = "2.4.0"
+navigation = "2.7.1"
+espresso = "3.5.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -32,7 +33,7 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
-compose-viewmodel = {module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref="viewModelVersion" }
+compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModelVersion" }
 androidx-compose-integration-constraintLayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-integration-constraintlayout" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 
@@ -50,19 +51,20 @@ ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-material3 = { group = "androidx.compose.material3", name = "material3" , version.ref="material3"}
+material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 material = { group = "androidx.compose.material", name = "material" }
-navigation = { module = "androidx.navigation:navigation-compose" , version.ref="navigation"}
-coil = { module = "io.coil-kt:coil-compose", version.ref="coil" }
-espresso = { module = "androidx.test.espresso:espresso-core", version.ref="espresso" }
+navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 
-fonts = {  module = "androidx.compose.ui:ui-text-google-fonts", version.ref="fonts" }
+fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "fonts" }
 
 # Retrofit
-retrofit = {module="com.squareup.retrofit2:retrofit", version.ref="retrofit" }
-retrofit-moshi = {module="com.squareup.moshi:moshi-kotlin", version.ref="moshi" }
-retrofit-moshi-converter = {module="com.squareup.retrofit2:converter-moshi", version.ref="retrofit" }
-moshiCodeGen = {module="com.squareup.moshi:moshi-kotlin-codegen", version.ref="moshi" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-moshi = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
+retrofit-moshi-converter = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+moshiCodeGen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
+retrofit-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "retrofit-logging" }
 
 
 [plugins]

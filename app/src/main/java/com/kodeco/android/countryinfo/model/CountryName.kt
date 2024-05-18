@@ -1,3 +1,5 @@
 package com.kodeco.android.countryinfo.model
 
-data class CountryName(val common: String)
+data class CountryName(
+    val common: String
+)

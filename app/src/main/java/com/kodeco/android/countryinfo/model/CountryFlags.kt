@@ -1,3 +1,5 @@
 package com.kodeco.android.countryinfo.model
 
-data class CountryFlags(val png: String)
+data class CountryFlags(
+    val png: String
+)
