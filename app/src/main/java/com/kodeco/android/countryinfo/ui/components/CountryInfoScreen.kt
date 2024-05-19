@@ -15,7 +15,7 @@ import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.Result
 import com.kodeco.android.countryinfo.networking.NetworkStatusChecker
 import com.kodeco.android.countryinfo.networking.RemoteApi
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
