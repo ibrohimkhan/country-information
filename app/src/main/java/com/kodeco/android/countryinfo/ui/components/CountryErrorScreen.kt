@@ -17,7 +17,7 @@ import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
-fun CountryErrorScreen(message: String?) {
+fun CountryErrorScreen(message: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -25,7 +25,7 @@ fun CountryErrorScreen(message: String?) {
             .fillMaxSize()
     ) {
         Text(
-            text = message ?: stringResource(R.string.something_went_wrong),
+            text = message,
             style = MaterialTheme.typography.titleMedium,
             color = Color.Red,
             modifier = Modifier.padding(16.dp)

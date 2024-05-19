@@ -1,6 +1,7 @@
 package com.kodeco.android.countryinfo.ui.components
 
 import android.net.ConnectivityManager
+import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,16 +9,29 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.Result
 import com.kodeco.android.countryinfo.networking.NetworkStatusChecker
 import com.kodeco.android.countryinfo.networking.RemoteApi
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+@Parcelize
+sealed interface UiState: Parcelable {
+    @Parcelize
+    data class Success(val countries: List<Country>): UiState
+
+    @Parcelize
+    data class Error(val message: String): UiState
+
+    @Parcelize
+    object Loading: UiState
+}
 
 @Composable
 fun CountryInfoScreen(remoteApi: RemoteApi) {
@@ -26,15 +40,15 @@ fun CountryInfoScreen(remoteApi: RemoteApi) {
         NetworkStatusChecker(context.getSystemService(ConnectivityManager::class.java))
     }
 
+    val message = stringResource(R.string.something_went_wrong)
+
     val coroutineScope = rememberCoroutineScope {
         Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
             throw throwable
         }
     }
 
-    var countries by rememberSaveable { mutableStateOf<List<Country>>(emptyList()) }
-    var isError by rememberSaveable { mutableStateOf(false) }
-    var errorInfo by rememberSaveable { mutableStateOf<String?>(null) }
+    var uiState by rememberSaveable { mutableStateOf<UiState>(UiState.Loading) }
 
     if (networkStatusChecker.isConnected()) {
         coroutineScope.launch {
@@ -43,28 +57,22 @@ fun CountryInfoScreen(remoteApi: RemoteApi) {
             withContext(Dispatchers.Main) {
                 when (result) {
                     is Result.Success -> {
-                        countries = result.data
+                        uiState = UiState.Success(result.data)
                     }
 
                     is Result.Failure -> {
-                        isError = true
-                        errorInfo = result.error?.message
+                        uiState = UiState.Error(result.error?.message ?: message)
                     }
                 }
             }
         }
     } else {
-        isError = true
-        errorInfo = context.getString(R.string.connection_problem)
+        uiState = UiState.Error(message = context.getString(R.string.connection_problem))
     }
 
-    if (isError) {
-        CountryErrorScreen(message = errorInfo)
-    } else {
-        CountryInfoList(countries = countries)
+    when (uiState) {
+        is UiState.Loading -> Loading()
+        is UiState.Error -> CountryErrorScreen(message = (uiState as UiState.Error).message)
+        is UiState.Success -> CountryInfoList(countries = (uiState as UiState.Success).countries)
     }
 }
-
-@Preview
-@Composable
-fun CountryInfoScreenPreview() {}
