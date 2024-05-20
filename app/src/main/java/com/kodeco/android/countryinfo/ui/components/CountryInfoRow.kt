@@ -1,6 +1,7 @@
 package com.kodeco.android.countryinfo.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,13 +23,20 @@ import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
-fun CountryInfoRow(country: Country, modifier: Modifier = Modifier) {
+fun CountryInfoRow(
+    country: Country,
+    modifier: Modifier = Modifier,
+    clickAction: (Country) -> Unit = {},
+) {
     val unknown = stringResource(R.string.unknown)
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .background(color = Color.LightGray)
+            .clickable {
+                clickAction(country)
+            },
     ) {
         Column(
             horizontalAlignment = Alignment.Start,
