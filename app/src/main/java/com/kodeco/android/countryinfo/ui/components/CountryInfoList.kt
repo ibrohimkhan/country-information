@@ -1,38 +1,28 @@
 package com.kodeco.android.countryinfo.ui.components
 
-import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
+import com.kodeco.android.countryinfo.model.toJson
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun CountryInfoList(countries: List<Country>, navController: NavHostController?) {
-    val unknown = stringResource(R.string.unknown)
-
     LazyColumn {
         items(countries) {
             CountryInfoRow(
                 country = it,
                 modifier = Modifier.padding(8.dp)
             ) {
-                val name = it.name.common
-                val capital = it.capital?.first() ?: unknown
-                val population = it.population.toString()
-                val area = it.area.toString()
-                val url = Uri.encode(it.flags.png)
-
-                navController?.navigate("countryDetails/$name/$capital/$population/$area/$url")
+                navController?.navigate("countryDetails/${it.toJson()}")
             }
         }
     }

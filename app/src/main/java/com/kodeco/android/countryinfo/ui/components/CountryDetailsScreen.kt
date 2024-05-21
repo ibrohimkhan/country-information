@@ -21,20 +21,19 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
+import com.kodeco.android.countryinfo.model.Country
+import com.kodeco.android.countryinfo.model.CountryFlags
+import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun CountryDetailsScreen(
-    name: String,
-    capital: String,
-    population: Long,
-    area: Double,
-    url: String,
+    country: Country,
     navController: NavHostController?
 ) {
     Scaffold(topBar = {
         AppBar(
-            title = name,
+            title = country.name.common,
             imageVector = Icons.Filled.ArrowBack
         ) {
             navController?.navigateUp()
@@ -51,26 +50,26 @@ fun CountryDetailsScreen(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.capital, capital),
+                    text = stringResource(R.string.capital, country.capital?.first() ?: stringResource(R.string.unknown)),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Black,
                     modifier = Modifier.padding(8.dp)
                 )
                 Text(
-                    text = stringResource(R.string.population, population),
+                    text = stringResource(R.string.population, country.population),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Black,
                     modifier = Modifier.padding(8.dp)
                 )
                 Text(
-                    text = stringResource(R.string.area, area),
+                    text = stringResource(R.string.area, country.area),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Black,
                     modifier = Modifier.padding(8.dp)
                 )
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(url)
+                        .data(country.flags.png)
                         .crossfade(true)
                         .build(),
                     contentDescription = stringResource(R.string.flag_description),
@@ -87,11 +86,13 @@ fun CountryDetailsScreen(
 fun CountryDetailsScreenPreview() {
     MyApplicationTheme {
         CountryDetailsScreen(
-            "Tajikistan",
-            "Dushanbe",
-            10_000_000,
-            300_000.0,
-            "tjk.png",
+            Country(
+                name = CountryName("Tajikistan"),
+                capital = listOf("Dushanbe"),
+                population = 10_000_000,
+                area = 300_000.0,
+                flags = CountryFlags("tjk.png")
+            ),
             null
         )
     }
