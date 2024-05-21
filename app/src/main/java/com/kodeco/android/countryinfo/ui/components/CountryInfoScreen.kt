@@ -2,14 +2,14 @@ package com.kodeco.android.countryinfo.ui.components
 
 import android.net.ConnectivityManager
 import android.os.Parcelable
+import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
@@ -22,22 +22,20 @@ import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.Result
 import com.kodeco.android.countryinfo.networking.NetworkStatusChecker
 import com.kodeco.android.countryinfo.networking.RemoteApi
-import kotlinx.parcelize.Parcelize
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
-sealed interface UiState: Parcelable {
+sealed interface UiState : Parcelable {
     @Parcelize
-    data class Success(val countries: List<Country>): UiState
+    data class Success(val countries: List<Country>) : UiState
 
     @Parcelize
-    data class Error(val message: String): UiState
+    data class Error(val message: String) : UiState
 
     @Parcelize
-    object Loading: UiState
+    object Loading : UiState
 }
 
 @Composable
@@ -47,17 +45,11 @@ fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
         NetworkStatusChecker(context.getSystemService(ConnectivityManager::class.java))
     }
 
-    val coroutineScope = rememberCoroutineScope {
-        Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
-            throw throwable
-        }
-    }
-
     val message = stringResource(R.string.something_went_wrong)
     var uiState by rememberSaveable { mutableStateOf<UiState>(UiState.Loading) }
 
     if (networkStatusChecker.isConnected()) {
-        coroutineScope.launch {
+        LaunchedEffect(uiState) {
             val result = remoteApi.getAllCountries()
 
             withContext(Dispatchers.Main) {
@@ -81,6 +73,7 @@ fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
         is UiState.Error -> CountryErrorScreen(
             message = (uiState as UiState.Error).message
         )
+
         is UiState.Success -> CountryInfoList(
             navController = navController,
             countries = (uiState as UiState.Success).countries
