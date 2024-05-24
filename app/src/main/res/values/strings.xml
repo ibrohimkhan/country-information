@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Country Info</string>
-    <string name="x_axis_slider_title">X Axis: %d%%</string>
-    <string name="y_axis_slider_title">Y Axis: %d%%</string>
+    <string name="name">Name: %1$s</string>
+    <string name="capital">Capital: %1$s</string>
+    <string name="population">Population: %1$s</string>
+    <string name="area">Area: %1$s</string>
+    <string name="unknown">N/A</string>
+    <string name="something_went_wrong">Something went wrong! Please, try again later</string>
+    <string name="connection_problem">Connection problem, please check your Internet!</string>
+    <string name="flag_description">Country flag</string>
 </resources>
