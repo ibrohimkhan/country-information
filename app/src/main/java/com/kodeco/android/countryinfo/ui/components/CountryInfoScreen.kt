@@ -2,7 +2,7 @@ package com.kodeco.android.countryinfo.ui.components
 
 import android.net.ConnectivityManager
 import android.os.Parcelable
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -35,7 +35,7 @@ sealed interface UiState : Parcelable {
     data class Error(val message: String) : UiState
 
     @Parcelize
-    object Loading : UiState
+    data object Loading : UiState
 }
 
 @Composable
@@ -53,13 +53,13 @@ fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
             val result = remoteApi.getAllCountries()
 
             withContext(Dispatchers.Main) {
-                when (result) {
+                uiState = when (result) {
                     is Result.Success -> {
-                        uiState = UiState.Success(result.data)
+                        UiState.Success(result.data)
                     }
 
                     is Result.Failure -> {
-                        uiState = UiState.Error(result.error?.message ?: message)
+                        UiState.Error(result.error?.message ?: message)
                     }
                 }
             }

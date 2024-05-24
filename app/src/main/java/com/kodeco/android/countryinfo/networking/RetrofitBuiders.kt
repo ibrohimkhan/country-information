@@ -16,6 +16,7 @@ fun moshi() = Moshi.Builder()
 
 fun buildClient(): OkHttpClient = OkHttpClient
     .Builder()
+    .readTimeout(60, TimeUnit.SECONDS)
     .connectTimeout(60, TimeUnit.SECONDS)
     .retryOnConnectionFailure(true)
     .addInterceptor(HttpLoggingInterceptor().apply {

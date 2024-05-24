@@ -21,8 +21,8 @@ fun CountryInfoList(countries: List<Country>, navController: NavHostController?)
             CountryInfoRow(
                 country = it,
                 modifier = Modifier.padding(8.dp)
-            ) {
-                navController?.navigate("countryDetails/${it.toJson()}")
+            ) { item ->
+                navController?.navigate("countryDetails/${item.toJson()}")
             }
         }
     }
