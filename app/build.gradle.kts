@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.retrofit.moshi.converter)
     implementation(libs.retrofit.logging)
     implementation(libs.coil)
+    implementation(libs.coroutines.android)
 
     ksp (libs.moshiCodeGen)
 
