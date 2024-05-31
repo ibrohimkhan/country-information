@@ -2,10 +2,10 @@ package com.kodeco.android.countryinfo.ui.components
 
 import android.net.ConnectivityManager
 import android.os.Parcelable
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,20 +22,20 @@ import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.Result
 import com.kodeco.android.countryinfo.networking.NetworkStatusChecker
 import com.kodeco.android.countryinfo.networking.RemoteApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-sealed interface UiState : Parcelable {
+sealed interface CountryInfoState : Parcelable {
     @Parcelize
-    data class Success(val countries: List<Country>) : UiState
+    data class Success(val countries: List<Country>) : CountryInfoState
 
     @Parcelize
-    data class Error(val message: String) : UiState
+    data class Error(val message: String) : CountryInfoState
 
     @Parcelize
-    data object Loading : UiState
+    data object Loading : CountryInfoState
 }
 
 @Composable
@@ -46,38 +46,28 @@ fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
     }
 
     val message = stringResource(R.string.something_went_wrong)
-    var uiState by rememberSaveable { mutableStateOf<UiState>(UiState.Loading) }
+    var countryInfoState: CountryInfoState by rememberSaveable { mutableStateOf(CountryInfoState.Loading) }
+
+    when (countryInfoState) {
+        is CountryInfoState.Loading -> Loading()
+        is CountryInfoState.Error -> CountryErrorScreen(
+            message = (countryInfoState as CountryInfoState.Error).message
+        )
+
+        is CountryInfoState.Success -> CountryInfoList(
+            navController = navController,
+            countries = (countryInfoState as CountryInfoState.Success).countries
+        )
+    }
 
     if (networkStatusChecker.isConnected()) {
-        LaunchedEffect(uiState) {
-            val result = remoteApi.getAllCountries()
-
-            withContext(Dispatchers.Main) {
-                uiState = when (result) {
-                    is Result.Success -> {
-                        UiState.Success(result.data)
-                    }
-
-                    is Result.Failure -> {
-                        UiState.Error(result.error?.message ?: message)
-                    }
-                }
+        LaunchedEffect("fetch-countries") {
+            getCountryInfoFlow(remoteApi, message).collect {
+                countryInfoState = it
             }
         }
     } else {
-        uiState = UiState.Error(message = context.getString(R.string.connection_problem))
-    }
-
-    when (uiState) {
-        is UiState.Loading -> Loading()
-        is UiState.Error -> CountryErrorScreen(
-            message = (uiState as UiState.Error).message
-        )
-
-        is UiState.Success -> CountryInfoList(
-            navController = navController,
-            countries = (uiState as UiState.Success).countries
-        )
+        countryInfoState = CountryInfoState.Error(message = context.getString(R.string.connection_problem))
     }
 }
 
@@ -96,4 +86,18 @@ fun AppBar(title: String, imageVector: ImageVector, iconClickAction: () -> Unit)
             }
         }
     )
+}
+
+private fun getCountryInfoFlow(remoteApi: RemoteApi, message: String): Flow<CountryInfoState> = flow {
+    val countryInfoState = when (val result = remoteApi.getAllCountries()) {
+        is Result.Success -> {
+            CountryInfoState.Success(result.data)
+        }
+
+        is Result.Failure -> {
+            CountryInfoState.Error(result.error?.message ?: message)
+        }
+    }
+
+    emit(countryInfoState)
 }

@@ -50,7 +50,10 @@ fun CountryDetailsScreen(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.capital, country.capital?.first() ?: stringResource(R.string.unknown)),
+                    text = stringResource(
+                        R.string.capital,
+                        country.capital?.firstOrNull() ?: stringResource(R.string.unknown)
+                    ),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Black,
                     modifier = Modifier.padding(8.dp)
