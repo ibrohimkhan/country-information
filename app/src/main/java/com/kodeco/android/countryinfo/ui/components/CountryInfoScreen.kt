@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.kodeco.android.countryinfo.R
+import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.Result
 import com.kodeco.android.countryinfo.networking.NetworkStatusChecker
@@ -48,26 +49,37 @@ fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
     val message = stringResource(R.string.something_went_wrong)
     var countryInfoState: CountryInfoState by rememberSaveable { mutableStateOf(CountryInfoState.Loading) }
 
+    LaunchedEffect(key1 = countryInfoState) {
+        if (networkStatusChecker.isConnected()) {
+            getCountryInfoFlow(remoteApi, message).collect {
+                Flows.updateCountryInfoState(it)
+            }
+
+        } else {
+            Flows.updateCountryInfoState(
+                CountryInfoState.Error(message = context.getString(R.string.connection_problem))
+            )
+        }
+    }
+
+    LaunchedEffect(key1 = "state-flows") {
+        Flows.countryInfoStateFlow
+            .collect {
+                countryInfoState = it
+            }
+    }
+
     when (countryInfoState) {
         is CountryInfoState.Loading -> Loading()
+
         is CountryInfoState.Error -> CountryErrorScreen(
             message = (countryInfoState as CountryInfoState.Error).message
         )
 
         is CountryInfoState.Success -> CountryInfoList(
             navController = navController,
-            countries = (countryInfoState as CountryInfoState.Success).countries
+            countries = (countryInfoState as CountryInfoState.Success).countries,
         )
-    }
-
-    if (networkStatusChecker.isConnected()) {
-        LaunchedEffect("fetch-countries") {
-            getCountryInfoFlow(remoteApi, message).collect {
-                countryInfoState = it
-            }
-        }
-    } else {
-        countryInfoState = CountryInfoState.Error(message = context.getString(R.string.connection_problem))
     }
 }
 
@@ -88,16 +100,17 @@ fun AppBar(title: String, imageVector: ImageVector, iconClickAction: () -> Unit)
     )
 }
 
-private fun getCountryInfoFlow(remoteApi: RemoteApi, message: String): Flow<CountryInfoState> = flow {
-    val countryInfoState = when (val result = remoteApi.getAllCountries()) {
-        is Result.Success -> {
-            CountryInfoState.Success(result.data)
+private fun getCountryInfoFlow(remoteApi: RemoteApi, message: String): Flow<CountryInfoState> =
+    flow {
+        val countryInfoState = when (val result = remoteApi.getAllCountries()) {
+            is Result.Success -> {
+                CountryInfoState.Success(result.data)
+            }
+
+            is Result.Failure -> {
+                CountryInfoState.Error(result.error?.message ?: message)
+            }
         }
 
-        is Result.Failure -> {
-            CountryInfoState.Error(result.error?.message ?: message)
-        }
+        emit(countryInfoState)
     }
-
-    emit(countryInfoState)
-}

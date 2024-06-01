@@ -1,6 +1,7 @@
 package com.kodeco.android.countryinfo.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ fun TapInfo(
 ) {
     var tapFlows by rememberSaveable { mutableIntStateOf(0) }
     var backFlows by rememberSaveable { mutableIntStateOf(0) }
+    var counterFlows by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect(key1 = "tapFlows") {
         Flows.tapFlow.collect {
@@ -42,29 +44,49 @@ fun TapInfo(
         }
     }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
+    LaunchedEffect(key1 = "counterFlows") {
+        Flows.counterFlow.collect {
+            counterFlows = it
+        }
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = stringResource(R.string.tap_flows, tapFlows),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(8.dp)
-        )
-        Button(
-            onClick = {
-                onRefresh()
-            },
-            shape = RoundedCornerShape(20.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.refresh_btn),
+                text = stringResource(R.string.tap_flows, tapFlows),
                 style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+
+            Button(
+                onClick = {
+                    onRefresh()
+                },
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.refresh_btn),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.back_flows, backFlows),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp)
             )
         }
+
         Text(
-            text = stringResource(R.string.back_flows, backFlows),
+            text = stringResource(R.string.uptime_flows, counterFlows),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(8.dp)
         )

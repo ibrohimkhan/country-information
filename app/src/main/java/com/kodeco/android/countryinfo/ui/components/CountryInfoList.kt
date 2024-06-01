@@ -17,9 +17,14 @@ import com.kodeco.android.countryinfo.model.toJson
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
-fun CountryInfoList(countries: List<Country>, navController: NavHostController?) {
+fun CountryInfoList(
+    countries: List<Country>,
+    navController: NavHostController?
+) {
     Column {
-        TapInfo()
+        TapInfo() {
+            Flows.updateCountryInfoState(CountryInfoState.Loading)
+        }
         LazyColumn {
             items(countries) {
                 CountryInfoRow(
