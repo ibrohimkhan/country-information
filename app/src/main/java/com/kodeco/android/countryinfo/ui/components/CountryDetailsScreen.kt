@@ -39,7 +39,7 @@ fun CountryDetailsScreen(
     }
 
     Column {
-        TapInfo() {
+        TapInfo {
             navController?.navigateUp()
             Flows.updateCountryInfoState(CountryInfoState.Loading)
         }

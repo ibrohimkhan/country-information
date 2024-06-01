@@ -22,7 +22,7 @@ fun CountryInfoList(
     navController: NavHostController?
 ) {
     Column {
-        TapInfo() {
+        TapInfo {
             Flows.updateCountryInfoState(CountryInfoState.Loading)
         }
         LazyColumn {
