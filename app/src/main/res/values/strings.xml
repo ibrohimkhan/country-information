@@ -8,4 +8,7 @@
     <string name="something_went_wrong">Something went wrong! Please, try again later</string>
     <string name="connection_problem">Connection problem, please check your Internet!</string>
     <string name="flag_description">Country flag</string>
+    <string name="tap_flows">Taps: %1$s</string>
+    <string name="back_flows">Back: %1$s</string>
+    <string name="refresh_btn">Refresh</string>
 </resources>
