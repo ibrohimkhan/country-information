@@ -1,5 +1,6 @@
 package com.kodeco.android.countryinfo.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
@@ -16,13 +18,17 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun CountryInfoList(countries: List<Country>, navController: NavHostController?) {
-    LazyColumn {
-        items(countries) {
-            CountryInfoRow(
-                country = it,
-                modifier = Modifier.padding(8.dp)
-            ) { item ->
-                navController?.navigate("countryDetails/${item.toJson()}")
+    Column {
+        TapInfo()
+        LazyColumn {
+            items(countries) {
+                CountryInfoRow(
+                    country = it,
+                    modifier = Modifier.padding(8.dp)
+                ) { item ->
+                    Flows.tap()
+                    navController?.navigate("countryDetails/${item.toJson()}")
+                }
             }
         }
     }

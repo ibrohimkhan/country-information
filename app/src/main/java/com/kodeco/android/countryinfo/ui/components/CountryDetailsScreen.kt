@@ -1,5 +1,6 @@
 package com.kodeco.android.countryinfo.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
+import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
@@ -31,54 +33,63 @@ fun CountryDetailsScreen(
     country: Country,
     navController: NavHostController?
 ) {
-    Scaffold(topBar = {
-        AppBar(
-            title = country.name.common,
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack
-        ) {
-            navController?.navigateUp()
-        }
-    }) { innerPadding ->
-        Surface(
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(8.dp)
+    BackHandler {
+        Flows.tapBack()
+        navController?.navigateUp()
+    }
+
+    Column {
+        TapInfo()
+        Scaffold(topBar = {
+            AppBar(
+                title = country.name.common,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack
             ) {
-                Text(
-                    text = stringResource(
-                        R.string.capital,
-                        country.capital?.firstOrNull() ?: stringResource(R.string.unknown)
-                    ),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = stringResource(R.string.population, country.population),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = stringResource(R.string.area, country.area),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp)
-                )
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(country.flags.png)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = stringResource(R.string.flag_description),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.padding(8.dp)
-                )
+                Flows.tapBack()
+                navController?.navigateUp()
+            }
+        }) { innerPadding ->
+            Surface(
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(
+                            R.string.capital,
+                            country.capital?.firstOrNull() ?: stringResource(R.string.unknown)
+                        ),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.population, country.population),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.area, country.area),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(country.flags.png)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = stringResource(R.string.flag_description),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
             }
         }
     }
