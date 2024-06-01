@@ -16,7 +16,7 @@ object Flows {
     private val _backFlow = MutableStateFlow(0)
     val backFlow = _backFlow.asStateFlow()
 
-    private val _counterFlow = MutableStateFlow(0)
+    private val _counterFlow = MutableStateFlow<Int>(0)
     val counterFlow = _counterFlow.asStateFlow()
 
     private val _countryInfoStateFlow = MutableStateFlow<CountryInfoState>(CountryInfoState.Loading)
