@@ -49,7 +49,7 @@ fun CountryInfoRow(
                 modifier = Modifier.padding(4.dp)
             )
             Text(
-                text = stringResource(R.string.capital, country.capital?.first() ?: unknown),
+                text = stringResource(R.string.capital, country.capital?.firstOrNull() ?: unknown),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(4.dp)
             )

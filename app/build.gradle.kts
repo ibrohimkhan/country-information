@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.compose.compiler)
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
@@ -54,7 +55,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.0"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -77,6 +78,7 @@ dependencies {
     implementation(libs.retrofit.moshi.converter)
     implementation(libs.retrofit.logging)
     implementation(libs.coil)
+    implementation(libs.coroutines.android)
 
     ksp (libs.moshiCodeGen)
 
