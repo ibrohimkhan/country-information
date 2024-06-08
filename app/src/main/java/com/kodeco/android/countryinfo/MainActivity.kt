@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.kodeco.android.countryinfo.networking.buildApiService
 import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
-import com.kodeco.android.countryinfo.ui.components.ApplicationNavigation
+import com.kodeco.android.countryinfo.ui.ApplicationNavigation
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {

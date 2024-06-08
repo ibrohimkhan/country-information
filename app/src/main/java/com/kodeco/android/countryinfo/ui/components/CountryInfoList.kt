@@ -13,17 +13,17 @@ import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
-import com.kodeco.android.countryinfo.model.toJson
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun CountryInfoList(
     countries: List<Country>,
-    navController: NavHostController?
+    navController: NavHostController?,
+    onRefresh: () -> Unit = {},
 ) {
     Column {
         TapInfo {
-            Flows.updateCountryInfoState(CountryInfoState.Loading)
+            onRefresh()
         }
         LazyColumn {
             items(countries) {
@@ -32,7 +32,7 @@ fun CountryInfoList(
                     modifier = Modifier.padding(8.dp)
                 ) { item ->
                     Flows.tap()
-                    navController?.navigate("countryDetails/${item.toJson()}")
+                    navController?.navigate("countryDetails/${item.name.common}")
                 }
             }
         }

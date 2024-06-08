@@ -1,6 +1,6 @@
 package com.kodeco.android.countryinfo.flow
 
-import com.kodeco.android.countryinfo.ui.components.CountryInfoState
+import com.kodeco.android.countryinfo.ui.screens.countryinfo.UiState
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -19,7 +19,7 @@ object Flows {
     private val _counterFlow = MutableStateFlow<Int>(0)
     val counterFlow = _counterFlow.asStateFlow()
 
-    private val _countryInfoStateFlow = MutableStateFlow<CountryInfoState>(CountryInfoState.Loading)
+    private val _countryInfoStateFlow = MutableStateFlow<UiState>(UiState.Loading)
     val countryInfoStateFlow = _countryInfoStateFlow.asStateFlow()
 
     init {
@@ -37,9 +37,5 @@ object Flows {
 
     fun tapBack() {
         _backFlow.value += 1
-    }
-
-    fun updateCountryInfoState(countryInfoState: CountryInfoState) {
-        _countryInfoStateFlow.value = countryInfoState
     }
 }

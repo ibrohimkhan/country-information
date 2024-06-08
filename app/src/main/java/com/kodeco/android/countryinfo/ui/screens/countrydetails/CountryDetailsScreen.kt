@@ -1,4 +1,4 @@
-package com.kodeco.android.countryinfo.ui.components
+package com.kodeco.android.countryinfo.ui.screens.countrydetails
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -16,23 +16,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.flow.Flows
-import com.kodeco.android.countryinfo.model.Country
-import com.kodeco.android.countryinfo.model.CountryFlags
-import com.kodeco.android.countryinfo.model.CountryName
-import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
+import com.kodeco.android.countryinfo.ui.components.TapInfo
+import com.kodeco.android.countryinfo.ui.screens.countryinfo.AppBar
 
 @Composable
 fun CountryDetailsScreen(
-    country: Country,
-    navController: NavHostController?
+    countryName: String,
+    viewModel: CountryDetailsViewModel?,
+    navController: NavHostController?,
+    onRefresh: () -> Unit = {}
 ) {
+    val country = viewModel?.getCountryDetails(countryName) ?: return
+
     BackHandler {
         Flows.tapBack()
         navController?.navigateUp()
@@ -41,7 +42,7 @@ fun CountryDetailsScreen(
     Column {
         TapInfo {
             navController?.navigateUp()
-            Flows.updateCountryInfoState(CountryInfoState.Loading)
+            onRefresh()
         }
         Scaffold(topBar = {
             AppBar(
@@ -95,22 +96,5 @@ fun CountryDetailsScreen(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CountryDetailsScreenPreview() {
-    MyApplicationTheme {
-        CountryDetailsScreen(
-            Country(
-                name = CountryName("Tajikistan"),
-                capital = listOf("Dushanbe"),
-                population = 10_000_000,
-                area = 300_000.0,
-                flags = CountryFlags("tjk.png")
-            ),
-            null
-        )
     }
 }

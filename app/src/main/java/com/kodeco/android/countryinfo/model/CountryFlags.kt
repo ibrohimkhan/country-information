@@ -6,4 +6,4 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class CountryFlags(
     val png: String
-): Parcelable
+) : Parcelable

@@ -13,6 +13,7 @@ class CountryRepositoryImpl(
     override fun fetchCountries(): Flow<List<Country>> = flow {
         try {
             val result = apiService.getAllCountries()
+            countries = result
             emit(result)
         } catch (e: Exception) {
             throw e
