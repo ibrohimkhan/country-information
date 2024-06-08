@@ -20,9 +20,8 @@ import androidx.navigation.NavHostController
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.model.Country
-import com.kodeco.android.countryinfo.model.Result
 import com.kodeco.android.countryinfo.networking.NetworkStatusChecker
-import com.kodeco.android.countryinfo.networking.RemoteApi
+import com.kodeco.android.countryinfo.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.parcelize.Parcelize
@@ -40,7 +39,7 @@ sealed interface CountryInfoState : Parcelable {
 }
 
 @Composable
-fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
+fun CountryInfoScreen(repository: CountryRepository, navController: NavHostController?) {
     val context = LocalContext.current
     val networkStatusChecker by lazy {
         NetworkStatusChecker(context.getSystemService(ConnectivityManager::class.java))
@@ -51,7 +50,7 @@ fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
 
     LaunchedEffect(key1 = countryInfoState) {
         if (networkStatusChecker.isConnected()) {
-            getCountryInfoFlow(remoteApi, message).collect {
+            getCountryInfoFlow(repository, message).collect {
                 Flows.updateCountryInfoState(it)
             }
 
@@ -102,17 +101,13 @@ fun AppBar(title: String, imageVector: ImageVector, iconClickAction: () -> Unit)
     )
 }
 
-private fun getCountryInfoFlow(remoteApi: RemoteApi, message: String): Flow<CountryInfoState> =
+private fun getCountryInfoFlow(repository: CountryRepository, message: String): Flow<CountryInfoState> =
     flow {
-        val countryInfoState = when (val result = remoteApi.getAllCountries()) {
-            is Result.Success -> {
-                CountryInfoState.Success(result.data)
+        try {
+            repository.fetchCountries().collect {
+                emit(CountryInfoState.Success(it))
             }
-
-            is Result.Failure -> {
-                CountryInfoState.Error(result.error?.message ?: message)
-            }
+        } catch (e: Exception) {
+            emit(CountryInfoState.Error(e.message ?: message))
         }
-
-        emit(countryInfoState)
     }

@@ -12,20 +12,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kodeco.android.countryinfo.model.fromJson
-import com.kodeco.android.countryinfo.networking.RemoteApi
 import com.kodeco.android.countryinfo.networking.buildApiService
+import com.kodeco.android.countryinfo.repository.CountryRepository
+import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 
 const val COUNTRY_KEY = "countries"
 
 @Composable
-fun ApplicationNavigation(remoteApi: RemoteApi) {
+fun ApplicationNavigation(repository: CountryRepository) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "countries") {
         composable(route = "countries") {
-            CountryInfoScreen(remoteApi, navController)
+            CountryInfoScreen(repository, navController)
         }
 
         composable(
@@ -49,14 +50,14 @@ fun ApplicationNavigation(remoteApi: RemoteApi) {
 @Preview(showBackground = true)
 @Composable
 fun ApplicationNavigationPreview() {
-    val remoteApi = RemoteApi(buildApiService())
+    val repository = CountryRepositoryImpl(buildApiService())
 
     MyApplicationTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.White
         ) {
-            ApplicationNavigation(remoteApi)
+            ApplicationNavigation(repository)
         }
     }
 }
