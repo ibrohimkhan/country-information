@@ -12,4 +12,5 @@
     <string name="back_flows">Back: %1$s</string>
     <string name="refresh_btn">Refresh</string>
     <string name="uptime_flows">Uptime: %1$s sec</string>
+    <string name="retry">Retry</string>
 </resources>

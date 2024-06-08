@@ -74,7 +74,9 @@ fun CountryInfoScreen(remoteApi: RemoteApi, navController: NavHostController?) {
 
         is CountryInfoState.Error -> CountryErrorScreen(
             message = (countryInfoState as CountryInfoState.Error).message
-        )
+        ) {
+            countryInfoState = CountryInfoState.Loading
+        }
 
         is CountryInfoState.Success -> CountryInfoList(
             navController = navController,
