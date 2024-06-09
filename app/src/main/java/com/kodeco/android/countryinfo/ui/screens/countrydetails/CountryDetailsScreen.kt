@@ -17,25 +17,27 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
-import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.ui.components.TapInfo
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.AppBar
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 
 @Composable
 fun CountryDetailsScreen(
     countryName: String,
-    viewModel: CountryDetailsViewModel?,
+    countryDetailsViewModel: CountryDetailsViewModel,
     navController: NavHostController?,
     onRefresh: () -> Unit = {}
 ) {
-    val country = viewModel?.getCountryDetails(countryName) ?: return
+    val country = countryDetailsViewModel.getCountryDetails(countryName) ?: return
+    val tapInfoViewModel: TapInfoViewModel = viewModel()
 
     BackHandler {
-        Flows.tapBack()
+        tapInfoViewModel.tapBack()
         navController?.navigateUp()
     }
 
@@ -49,7 +51,7 @@ fun CountryDetailsScreen(
                 title = country.name.common,
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack
             ) {
-                Flows.tapBack()
+                tapInfoViewModel.tapBack()
                 navController?.navigateUp()
             }
         }) { innerPadding ->

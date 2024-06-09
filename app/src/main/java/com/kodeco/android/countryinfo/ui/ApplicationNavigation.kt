@@ -34,14 +34,14 @@ fun ApplicationNavigation(repository: CountryRepository) {
         factory = CountryInfoViewModelFactory(repository)
     )
 
-    val countryDetailsViewModel: CountryDetailsViewModel = viewModel(
+    val viewModel: CountryDetailsViewModel = viewModel(
         factory = CountryDetailsViewModelFactory(repository)
     )
 
     NavHost(navController = navController, startDestination = "countries") {
         composable(route = "countries") {
             CountryInfoScreen(
-                viewModel = countryInfoViewModel,
+                countryInfoViewModel = countryInfoViewModel,
                 navController = navController
             )
         }
@@ -58,7 +58,7 @@ fun ApplicationNavigation(repository: CountryRepository) {
 
             CountryDetailsScreen(
                 countryName = country,
-                viewModel = countryDetailsViewModel,
+                countryDetailsViewModel = viewModel,
                 navController = navController
             ) {
                 countryInfoViewModel.loadCountries()

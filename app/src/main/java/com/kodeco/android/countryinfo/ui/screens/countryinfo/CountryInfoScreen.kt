@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -30,28 +31,28 @@ sealed class UiState : Parcelable {
 
 @Composable
 fun CountryInfoScreen(
-    viewModel: CountryInfoViewModel,
+    countryInfoViewModel: CountryInfoViewModel,
     navController: NavHostController?
 ) {
     val message = stringResource(R.string.something_went_wrong)
-    val state = viewModel.uiState.collectAsState()
+    val state by countryInfoViewModel.uiState.collectAsState()
 
-    when (state.value) {
-        is UiState.Initial -> {}
+    when (state) {
+        is UiState.Initial -> Unit
 
         is UiState.Loading -> Loading()
 
         is UiState.Error -> CountryErrorScreen(
-            message = (state.value as UiState.Error).throwable.message ?: message
+            message = (state as UiState.Error).throwable.message ?: message
         ) {
-            viewModel.loadCountries()
+            countryInfoViewModel.loadCountries()
         }
 
         is UiState.Success -> CountryInfoList(
             navController = navController,
-            countries = (state.value as UiState.Success).countries,
+            countries = (state as UiState.Success).countries,
         ) {
-            viewModel.loadCountries()
+            countryInfoViewModel.loadCountries()
         }
     }
 }
