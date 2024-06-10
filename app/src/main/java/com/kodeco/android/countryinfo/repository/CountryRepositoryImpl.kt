@@ -29,6 +29,6 @@ class CountryRepositoryImpl(
         }
     }
 
-    override fun getCountry(name: String): Country? =
+    override suspend fun getCountry(name: String): Country? =
         countries.firstOrNull { country -> country.name.common == name }
 }

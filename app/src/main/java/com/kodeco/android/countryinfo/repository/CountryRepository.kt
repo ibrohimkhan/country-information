@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
     fun fetchCountries(): Flow<List<Country>>
-    fun getCountry(name: String): Country?
+    suspend fun getCountry(name: String): Country?
 }
