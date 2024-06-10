@@ -17,7 +17,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -30,11 +29,11 @@ import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 fun CountryDetailsScreen(
     countryName: String,
     countryDetailsViewModel: CountryDetailsViewModel,
+    tapInfoViewModel: TapInfoViewModel,
     navController: NavHostController?,
     onRefresh: () -> Unit = {}
 ) {
     val country = countryDetailsViewModel.getCountryDetails(countryName) ?: return
-    val tapInfoViewModel: TapInfoViewModel = viewModel()
 
     BackHandler {
         tapInfoViewModel.tapBack()
@@ -42,7 +41,7 @@ fun CountryDetailsScreen(
     }
 
     Column {
-        TapInfo {
+        TapInfo(viewModel = tapInfoViewModel) {
             navController?.navigateUp()
             onRefresh()
         }

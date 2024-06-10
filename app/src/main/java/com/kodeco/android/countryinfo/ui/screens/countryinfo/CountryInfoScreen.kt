@@ -17,6 +17,7 @@ import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
 import com.kodeco.android.countryinfo.ui.components.CountryInfoList
 import com.kodeco.android.countryinfo.ui.components.Loading
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -32,6 +33,7 @@ sealed class UiState : Parcelable {
 @Composable
 fun CountryInfoScreen(
     countryInfoViewModel: CountryInfoViewModel,
+    tapInfoViewModel: TapInfoViewModel,
     navController: NavHostController?
 ) {
     val message = stringResource(R.string.something_went_wrong)
@@ -49,6 +51,7 @@ fun CountryInfoScreen(
         }
 
         is UiState.Success -> CountryInfoList(
+            tapInfoViewModel = tapInfoViewModel,
             navController = navController,
             countries = (state as UiState.Success).countries,
         ) {

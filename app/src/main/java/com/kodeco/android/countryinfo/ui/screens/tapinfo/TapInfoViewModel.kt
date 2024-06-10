@@ -1,32 +1,27 @@
 package com.kodeco.android.countryinfo.ui.screens.tapinfo
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class TapInfoViewModel : ViewModel() {
+
+    private val _tapFlow = MutableStateFlow(0)
+    private val _backFlow = MutableStateFlow(0)
+    private val _counterFlow = MutableStateFlow(0)
+
     val tapFlow = _tapFlow.asStateFlow()
     val backFlow = _backFlow.asStateFlow()
     val counterFlow = _counterFlow.asStateFlow()
 
-    @OptIn(DelicateCoroutinesApi::class)
-    companion object {
-        private val _tapFlow = MutableStateFlow(0)
-        private val _backFlow = MutableStateFlow(0)
-        private val _counterFlow = MutableStateFlow<Int>(0)
-
-        init {
-            // Operating on the whole application lifetime. It showed better performance in UI then
-            // viewModelScope during the tests
-            GlobalScope.launch {
-                while (true) {
-                    delay(1000L)
-                    _counterFlow.value += 1
-                }
+    init {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000L)
+                _counterFlow.value += 1
             }
         }
     }

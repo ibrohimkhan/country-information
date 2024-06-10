@@ -18,14 +18,14 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun CountryInfoList(
-    countries: List<Country>,
+    tapInfoViewModel: TapInfoViewModel,
     navController: NavHostController?,
+    countries: List<Country>,
     onRefresh: () -> Unit = {},
 ) {
-    val tapInfoViewModel: TapInfoViewModel = viewModel()
 
     Column {
-        TapInfo {
+        TapInfo(viewModel = tapInfoViewModel) {
             onRefresh()
         }
         LazyColumn {
@@ -47,6 +47,7 @@ fun CountryInfoList(
 fun CountryInfoListPreview() {
     MyApplicationTheme {
         CountryInfoList(
+            tapInfoViewModel = viewModel(),
             navController = null,
             countries = listOf(
                 Country(

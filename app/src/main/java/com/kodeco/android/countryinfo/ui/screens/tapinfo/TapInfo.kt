@@ -24,10 +24,9 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun TapInfo(
+    viewModel: TapInfoViewModel,
     onRefresh: () -> Unit = {}
 ) {
-    val viewModel: TapInfoViewModel = viewModel()
-
     val tapFlows by viewModel.tapFlow.collectAsState()
     val backFlows by viewModel.backFlow.collectAsState()
     val counterFlows by viewModel.counterFlow.collectAsState()
@@ -79,6 +78,6 @@ fun TapInfo(
 @Composable
 fun TapInfoPreview() {
     MyApplicationTheme {
-        TapInfo()
+        TapInfo(viewModel = viewModel())
     }
 }

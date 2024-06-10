@@ -21,6 +21,7 @@ import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsVi
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModel
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModelFactory
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 
@@ -28,6 +29,7 @@ const val COUNTRY_KEY = "countryName"
 
 @Composable
 fun ApplicationNavigation(repository: CountryRepository) {
+
     val navController = rememberNavController()
 
     val countryInfoViewModel: CountryInfoViewModel = viewModel(
@@ -38,10 +40,13 @@ fun ApplicationNavigation(repository: CountryRepository) {
         factory = CountryDetailsViewModelFactory(repository)
     )
 
+    val tapInfoViewModel: TapInfoViewModel = viewModel()
+
     NavHost(navController = navController, startDestination = "countries") {
         composable(route = "countries") {
             CountryInfoScreen(
                 countryInfoViewModel = countryInfoViewModel,
+                tapInfoViewModel = tapInfoViewModel,
                 navController = navController
             )
         }
@@ -59,6 +64,7 @@ fun ApplicationNavigation(repository: CountryRepository) {
             CountryDetailsScreen(
                 countryName = country,
                 countryDetailsViewModel = viewModel,
+                tapInfoViewModel = tapInfoViewModel,
                 navController = navController
             ) {
                 countryInfoViewModel.loadCountries()
