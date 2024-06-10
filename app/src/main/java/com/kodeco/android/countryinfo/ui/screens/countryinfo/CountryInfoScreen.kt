@@ -1,6 +1,5 @@
 package com.kodeco.android.countryinfo.ui.screens.countryinfo
 
-import android.os.Parcelable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -13,22 +12,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.kodeco.android.countryinfo.R
-import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
 import com.kodeco.android.countryinfo.ui.components.CountryInfoList
 import com.kodeco.android.countryinfo.ui.components.Loading
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
-sealed class UiState : Parcelable {
-    data class Success(val countries: List<Country>) : UiState()
-
-    data class Error(val throwable: Throwable) : UiState()
-
-    data object Loading : UiState()
-    data object Initial : UiState()
-}
 
 @Composable
 fun CountryInfoScreen(
@@ -39,6 +27,10 @@ fun CountryInfoScreen(
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
 
+    val onRefresh = {
+        countryInfoViewModel.processIntent(CountryInfoIntent.LoadCountries)
+    }
+
     when (state) {
         is UiState.Initial -> Unit
 
@@ -47,7 +39,7 @@ fun CountryInfoScreen(
         is UiState.Error -> CountryErrorScreen(
             message = (state as UiState.Error).throwable.message ?: message
         ) {
-            countryInfoViewModel.loadCountries()
+            onRefresh()
         }
 
         is UiState.Success -> CountryInfoList(
@@ -55,7 +47,7 @@ fun CountryInfoScreen(
             navController = navController,
             countries = (state as UiState.Success).countries,
         ) {
-            countryInfoViewModel.loadCountries()
+            onRefresh()
         }
     }
 }

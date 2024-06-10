@@ -18,6 +18,7 @@ import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
 import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsScreen
 import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsViewModel
 import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsViewModelFactory
+import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModel
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModelFactory
@@ -67,7 +68,7 @@ fun ApplicationNavigation(repository: CountryRepository) {
                 tapInfoViewModel = tapInfoViewModel,
                 navController = navController
             ) {
-                countryInfoViewModel.loadCountries()
+                countryInfoViewModel.processIntent(CountryInfoIntent.LoadCountries)
             }
         }
     }
