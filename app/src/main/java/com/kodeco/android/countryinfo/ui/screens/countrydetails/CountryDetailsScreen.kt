@@ -21,7 +21,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
-import com.kodeco.android.countryinfo.ui.components.TapInfo
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.AppBar
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 

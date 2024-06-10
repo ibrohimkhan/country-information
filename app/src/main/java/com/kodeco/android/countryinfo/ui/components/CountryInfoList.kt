@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
