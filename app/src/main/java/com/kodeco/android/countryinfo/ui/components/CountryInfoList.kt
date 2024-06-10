@@ -14,6 +14,7 @@ import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
@@ -35,7 +36,7 @@ fun CountryInfoList(
                     country = it,
                     modifier = Modifier.padding(8.dp)
                 ) { item ->
-                    tapInfoViewModel.tap()
+                    tapInfoViewModel.processIntent(TapInfoIntent.Tap)
                     navController?.navigate("countryDetails/${item.name.common}")
                 }
             }

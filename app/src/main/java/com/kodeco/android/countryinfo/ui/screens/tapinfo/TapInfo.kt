@@ -26,9 +26,7 @@ fun TapInfo(
     viewModel: TapInfoViewModel,
     onRefresh: () -> Unit = {}
 ) {
-    val tapFlows by viewModel.tapFlow.collectAsState()
-    val backFlows by viewModel.backFlow.collectAsState()
-    val counterFlows by viewModel.counterFlow.collectAsState()
+    val state by viewModel.state.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,7 +39,7 @@ fun TapInfo(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.tap_flows, tapFlows),
+                text = stringResource(R.string.tap_flows, state.tapCount),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(8.dp)
             )
@@ -59,14 +57,14 @@ fun TapInfo(
             }
 
             Text(
-                text = stringResource(R.string.back_flows, backFlows),
+                text = stringResource(R.string.back_flows, state.backCount),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(8.dp)
             )
         }
 
         Text(
-            text = stringResource(R.string.uptime_flows, counterFlows),
+            text = stringResource(R.string.uptime_flows, state.counter),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(8.dp)
         )

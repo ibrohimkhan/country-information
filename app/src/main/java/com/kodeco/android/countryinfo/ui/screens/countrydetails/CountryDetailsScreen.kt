@@ -23,6 +23,7 @@ import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.AppBar
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 
 @Composable
@@ -36,7 +37,7 @@ fun CountryDetailsScreen(
     val country = countryDetailsViewModel.getCountryDetails(countryName) ?: return
 
     BackHandler {
-        tapInfoViewModel.tapBack()
+        tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
         navController?.navigateUp()
     }
 
@@ -50,7 +51,7 @@ fun CountryDetailsScreen(
                 title = country.name.common,
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack
             ) {
-                tapInfoViewModel.tapBack()
+                tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
                 navController?.navigateUp()
             }
         }) { innerPadding ->

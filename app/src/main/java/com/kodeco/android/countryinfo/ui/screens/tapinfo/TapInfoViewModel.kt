@@ -7,30 +7,46 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+
+// State
+data class TapInfoState(
+    val tapCount: Int = 0,
+    val backCount: Int = 0,
+    val counter: Int = 0
+)
+
+// Intents
+sealed class TapInfoIntent {
+    object Tap : TapInfoIntent()
+    object TapBack : TapInfoIntent()
+}
+
+/**
+ * ViewModel for TapInfo screen.
+ */
 class TapInfoViewModel : ViewModel() {
 
-    private val _tapFlow = MutableStateFlow(0)
-    private val _backFlow = MutableStateFlow(0)
-    private val _counterFlow = MutableStateFlow(0)
-
-    val tapFlow = _tapFlow.asStateFlow()
-    val backFlow = _backFlow.asStateFlow()
-    val counterFlow = _counterFlow.asStateFlow()
+    private val _state = MutableStateFlow(TapInfoState())
+    val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
             while (true) {
                 delay(1000L)
-                _counterFlow.value += 1
+                _state.value = _state.value.copy(counter = _state.value.counter + 1)
             }
         }
     }
 
-    fun tap() {
-        _tapFlow.value += 1
-    }
+    fun processIntent(intent: TapInfoIntent) {
+        when (intent) {
+            is TapInfoIntent.Tap -> {
+                _state.value = _state.value.copy(tapCount = _state.value.tapCount + 1)
+            }
 
-    fun tapBack() {
-        _backFlow.value += 1
+            is TapInfoIntent.TapBack -> {
+                _state.value = _state.value.copy(backCount = _state.value.backCount + 1)
+            }
+        }
     }
 }
