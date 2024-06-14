@@ -28,9 +28,9 @@ import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
+import com.kodeco.android.countryinfo.ui.components.AppBar
 import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
 import com.kodeco.android.countryinfo.ui.components.Loading
-import com.kodeco.android.countryinfo.ui.screens.countryinfo.AppBar
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel

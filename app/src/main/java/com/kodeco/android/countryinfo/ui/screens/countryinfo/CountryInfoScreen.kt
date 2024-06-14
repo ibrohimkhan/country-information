@@ -1,14 +1,8 @@
 package com.kodeco.android.countryinfo.ui.screens.countryinfo
 
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.kodeco.android.countryinfo.R
@@ -50,21 +44,4 @@ fun CountryInfoScreen(
             onRefresh()
         }
     }
-}
-
-@Composable
-fun AppBar(title: String, imageVector: ImageVector, iconClickAction: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                color = Color.White
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { iconClickAction.invoke() }) {
-                Icon(imageVector = imageVector, contentDescription = "")
-            }
-        }
-    )
 }
