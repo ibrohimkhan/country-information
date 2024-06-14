@@ -58,7 +58,7 @@ fun AboutScreen(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    text = "Application version: $versionName",
+                    text = stringResource(R.string.application_version, versionName),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp)
                 )

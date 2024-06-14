@@ -17,4 +17,5 @@
     <string name="countries_screen">Countries</string>
     <string name="about_screen">About</string>
     <string name="about_app_text">Country Information App that fetches data from the REST Countries API and displays information about different countries</string>
+    <string name="application_version">Application version: %1$s</string>
 </resources>
