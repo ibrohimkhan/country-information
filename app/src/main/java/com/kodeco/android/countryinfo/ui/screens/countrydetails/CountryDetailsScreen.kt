@@ -1,7 +1,6 @@
 package com.kodeco.android.countryinfo.ui.screens.countrydetails
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,16 +8,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -84,15 +82,13 @@ private fun CountryDetails(
             }
         }
     ) { innerPadding ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+        Card(
+            modifier = Modifier.padding(innerPadding)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .background(color = Color.White)
+                    .fillMaxSize()
+                    .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
@@ -101,19 +97,16 @@ private fun CountryDetails(
                         country.capital?.firstOrNull() ?: stringResource(R.string.unknown)
                     ),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(8.dp)
                 )
                 Text(
                     text = stringResource(R.string.population, country.population),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(8.dp)
                 )
                 Text(
                     text = stringResource(R.string.area, country.area),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(8.dp)
                 )
                 AsyncImage(
