@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.kodeco.android.countryinfo.networking.RemoteApi
 import com.kodeco.android.countryinfo.networking.buildApiService
-import com.kodeco.android.countryinfo.ui.components.ApplicationNavigation
+import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
+import com.kodeco.android.countryinfo.ui.ApplicationNavigation
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val apiService = buildApiService()
-        val remoteApi = RemoteApi(apiService)
+        val repository = CountryRepositoryImpl(apiService)
 
         setContent {
             MyApplicationTheme {
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
                 ) {
-                    ApplicationNavigation(remoteApi)
+                    ApplicationNavigation(repository)
                 }
             }
         }

@@ -8,22 +8,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
-import com.kodeco.android.countryinfo.model.toJson
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun CountryInfoList(
+    tapInfoViewModel: TapInfoViewModel,
+    navController: NavHostController?,
     countries: List<Country>,
-    navController: NavHostController?
+    onRefresh: () -> Unit = {},
 ) {
+
     Column {
-        TapInfo {
-            Flows.updateCountryInfoState(CountryInfoState.Loading)
+        TapInfo(viewModel = tapInfoViewModel) {
+            onRefresh()
         }
         LazyColumn {
             items(countries) {
@@ -31,8 +36,8 @@ fun CountryInfoList(
                     country = it,
                     modifier = Modifier.padding(8.dp)
                 ) { item ->
-                    Flows.tap()
-                    navController?.navigate("countryDetails/${item.toJson()}")
+                    tapInfoViewModel.processIntent(TapInfoIntent.Tap)
+                    navController?.navigate("countryDetails/${item.name.common}")
                 }
             }
         }
@@ -44,6 +49,7 @@ fun CountryInfoList(
 fun CountryInfoListPreview() {
     MyApplicationTheme {
         CountryInfoList(
+            tapInfoViewModel = viewModel(),
             navController = null,
             countries = listOf(
                 Country(

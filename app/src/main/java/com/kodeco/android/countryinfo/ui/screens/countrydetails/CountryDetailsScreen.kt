@@ -1,4 +1,4 @@
-package com.kodeco.android.countryinfo.ui.components
+package com.kodeco.android.countryinfo.ui.screens.countrydetails
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -11,6 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -22,33 +25,66 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
-import com.kodeco.android.countryinfo.flow.Flows
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
+import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
+import com.kodeco.android.countryinfo.ui.components.Loading
+import com.kodeco.android.countryinfo.ui.screens.countryinfo.AppBar
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
+import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
+
 
 @Composable
 fun CountryDetailsScreen(
-    country: Country,
-    navController: NavHostController?
+    countryName: String,
+    countryDetailsViewModel: CountryDetailsViewModel,
+    tapInfoViewModel: TapInfoViewModel,
+    navController: NavHostController?,
+    onRefresh: () -> Unit = {}
 ) {
+    val state by countryDetailsViewModel.state.collectAsState()
+
+    // Emit intent to load country details
+    LaunchedEffect(key1 = countryName) {
+        countryDetailsViewModel.processIntent(CountryDetailsIntent.LoadCountryDetails(countryName))
+    }
+
     BackHandler {
-        Flows.tapBack()
+        tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
         navController?.navigateUp()
     }
 
+    if (state.isLoading) Loading()
+    else if (state.error != null) CountryErrorScreen(state.error!!)
+    else if (state.country != null) CountryDetails(
+        tapInfoViewModel,
+        navController,
+        onRefresh,
+        state.country!!
+    )
+}
+
+@Composable
+private fun CountryDetails(
+    tapInfoViewModel: TapInfoViewModel,
+    navController: NavHostController?,
+    onRefresh: () -> Unit,
+    country: Country
+) {
     Column {
-        TapInfo {
+        TapInfo(viewModel = tapInfoViewModel) {
             navController?.navigateUp()
-            Flows.updateCountryInfoState(CountryInfoState.Loading)
+            onRefresh()
         }
         Scaffold(topBar = {
             AppBar(
                 title = country.name.common,
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack
             ) {
-                Flows.tapBack()
+                tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
                 navController?.navigateUp()
             }
         }) { innerPadding ->
@@ -100,17 +136,19 @@ fun CountryDetailsScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun CountryDetailsScreenPreview() {
+fun CountryDetailsPreview() {
     MyApplicationTheme {
-        CountryDetailsScreen(
-            Country(
+        CountryDetails(
+            tapInfoViewModel = TapInfoViewModel(),
+            navController = null,
+            onRefresh = {},
+            country = Country(
                 name = CountryName("Tajikistan"),
                 capital = listOf("Dushanbe"),
                 population = 10_000_000,
                 area = 300_000.0,
                 flags = CountryFlags("tjk.png")
-            ),
-            null
+            )
         )
     }
 }
