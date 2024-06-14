@@ -1,9 +1,12 @@
 package com.kodeco.android.countryinfo.ui.screens.countrydetails
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +34,6 @@ import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.components.AppBar
 import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
 import com.kodeco.android.countryinfo.ui.components.Loading
-import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
@@ -43,7 +45,6 @@ fun CountryDetailsScreen(
     countryDetailsViewModel: CountryDetailsViewModel,
     tapInfoViewModel: TapInfoViewModel,
     navController: NavHostController?,
-    onRefresh: () -> Unit = {}
 ) {
     val state by countryDetailsViewModel.state.collectAsState()
 
@@ -62,7 +63,6 @@ fun CountryDetailsScreen(
     else if (state.country != null) CountryDetails(
         tapInfoViewModel,
         navController,
-        onRefresh,
         state.country!!
     )
 }
@@ -71,15 +71,10 @@ fun CountryDetailsScreen(
 private fun CountryDetails(
     tapInfoViewModel: TapInfoViewModel,
     navController: NavHostController?,
-    onRefresh: () -> Unit,
     country: Country
 ) {
-    Column {
-        TapInfo(viewModel = tapInfoViewModel) {
-            navController?.navigateUp()
-            onRefresh()
-        }
-        Scaffold(topBar = {
+    Scaffold(
+        topBar = {
             AppBar(
                 title = country.name.common,
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack
@@ -87,48 +82,49 @@ private fun CountryDetails(
                 tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
                 navController?.navigateUp()
             }
-        }) { innerPadding ->
-            Surface(
-                color = Color.White,
+        }
+    ) { innerPadding ->
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(8.dp)
+                    .background(color = Color.White)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = stringResource(
-                            R.string.capital,
-                            country.capital?.firstOrNull() ?: stringResource(R.string.unknown)
-                        ),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.population, country.population),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.area, country.area),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(country.flags.png)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = stringResource(R.string.flag_description),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
+                Text(
+                    text = stringResource(
+                        R.string.capital,
+                        country.capital?.firstOrNull() ?: stringResource(R.string.unknown)
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(8.dp)
+                )
+                Text(
+                    text = stringResource(R.string.population, country.population),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(8.dp)
+                )
+                Text(
+                    text = stringResource(R.string.area, country.area),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(8.dp)
+                )
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(country.flags.png)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = stringResource(R.string.flag_description),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }
@@ -141,7 +137,6 @@ fun CountryDetailsPreview() {
         CountryDetails(
             tapInfoViewModel = TapInfoViewModel(),
             navController = null,
-            onRefresh = {},
             country = Country(
                 name = CountryName("Tajikistan"),
                 capital = listOf("Dushanbe"),

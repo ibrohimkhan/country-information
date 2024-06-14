@@ -16,7 +16,8 @@ import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 fun CountryInfoScreen(
     countryInfoViewModel: CountryInfoViewModel,
     tapInfoViewModel: TapInfoViewModel,
-    navController: NavHostController?
+    navController: NavHostController?,
+    navigateToAboutScreen: () -> Unit
 ) {
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
@@ -40,8 +41,7 @@ fun CountryInfoScreen(
             tapInfoViewModel = tapInfoViewModel,
             navController = navController,
             countries = (state as UiState.Success).countries,
-        ) {
-            onRefresh()
-        }
+            navigateToAboutScreen = navigateToAboutScreen
+        )
     }
 }

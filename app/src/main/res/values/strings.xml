@@ -13,4 +13,8 @@
     <string name="refresh_btn">Refresh</string>
     <string name="uptime_flows">Uptime: %1$s sec</string>
     <string name="retry">Retry</string>
+    <string name="tap_info_screen">Tap Info</string>
+    <string name="countries_screen">Countries</string>
+    <string name="about_screen">About</string>
+    <string name="about_app_text">Country Information App that fetches data from the REST Countries API and displays information about different countries</string>
 </resources>

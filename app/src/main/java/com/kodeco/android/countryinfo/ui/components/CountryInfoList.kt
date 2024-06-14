@@ -1,19 +1,21 @@
 package com.kodeco.android.countryinfo.ui.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.model.CountryFlags
 import com.kodeco.android.countryinfo.model.CountryName
-import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfo
+import com.kodeco.android.countryinfo.ui.screens.Screens
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
@@ -23,14 +25,18 @@ fun CountryInfoList(
     tapInfoViewModel: TapInfoViewModel,
     navController: NavHostController?,
     countries: List<Country>,
-    onRefresh: () -> Unit = {},
+    navigateToAboutScreen: () -> Unit = {}
 ) {
-
-    Column {
-        TapInfo(viewModel = tapInfoViewModel) {
-            onRefresh()
-        }
-        LazyColumn {
+    Scaffold(topBar = {
+        CustomAppBar(
+            title = stringResource(R.string.countries_screen),
+            icon = Screens.About.icon,
+            iconClickAction = navigateToAboutScreen
+        )
+    }) {
+        LazyColumn(
+            modifier = Modifier.padding(it)
+        ) {
             items(countries) {
                 CountryInfoRow(
                     country = it,
