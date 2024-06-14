@@ -62,6 +62,8 @@ fun AboutScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp)
                 )
+
+                Spacer(modifier = Modifier.padding(16.dp))
             }
         }
     }
