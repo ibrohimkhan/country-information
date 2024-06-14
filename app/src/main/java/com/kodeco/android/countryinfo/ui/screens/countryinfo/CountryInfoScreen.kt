@@ -1,5 +1,6 @@
 package com.kodeco.android.countryinfo.ui.screens.countryinfo
 
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,9 +23,14 @@ fun CountryInfoScreen(
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
 
-    val onRefresh = {
+    val onReload = {
         countryInfoViewModel.processIntent(CountryInfoIntent.LoadCountries)
     }
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state is UiState.Loading,
+        onRefresh = onReload
+    )
 
     when (state) {
         is UiState.Initial -> Unit
@@ -34,14 +40,15 @@ fun CountryInfoScreen(
         is UiState.Error -> CountryErrorScreen(
             message = (state as UiState.Error).throwable.message ?: message
         ) {
-            onRefresh()
+            onReload()
         }
 
         is UiState.Success -> CountryInfoList(
             tapInfoViewModel = tapInfoViewModel,
             navController = navController,
             countries = (state as UiState.Success).countries,
-            navigateToAboutScreen = navigateToAboutScreen
+            navigateToAboutScreen = navigateToAboutScreen,
+            pullRefreshState = pullRefreshState
         )
     }
 }

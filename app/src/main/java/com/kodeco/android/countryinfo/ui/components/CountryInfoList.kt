@@ -1,8 +1,13 @@
 package com.kodeco.android.countryinfo.ui.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,8 +30,10 @@ fun CountryInfoList(
     tapInfoViewModel: TapInfoViewModel,
     navController: NavHostController?,
     countries: List<Country>,
-    navigateToAboutScreen: () -> Unit = {}
+    navigateToAboutScreen: () -> Unit = {},
+    pullRefreshState: PullRefreshState
 ) {
+
     Scaffold(topBar = {
         CustomAppBar(
             title = stringResource(R.string.countries_screen),
@@ -34,16 +41,21 @@ fun CountryInfoList(
             iconClickAction = navigateToAboutScreen
         )
     }) {
-        LazyColumn(
-            modifier = Modifier.padding(it)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+                .pullRefresh(pullRefreshState)
         ) {
-            items(countries) {
-                CountryInfoRow(
-                    country = it,
-                    modifier = Modifier.padding(8.dp)
-                ) { item ->
-                    tapInfoViewModel.processIntent(TapInfoIntent.Tap)
-                    navController?.navigate("countryDetails/${item.name.common}")
+            LazyColumn {
+                items(countries) {
+                    CountryInfoRow(
+                        country = it,
+                        modifier = Modifier.padding(8.dp)
+                    ) { item ->
+                        tapInfoViewModel.processIntent(TapInfoIntent.Tap)
+                        navController?.navigate("countryDetails/${item.name.common}")
+                    }
                 }
             }
         }
@@ -79,6 +91,10 @@ fun CountryInfoListPreview() {
                     area = 1_000_000.0,
                     flags = CountryFlags("kz.png")
                 ),
+            ),
+            pullRefreshState = rememberPullRefreshState(
+                refreshing = false,
+                onRefresh = {}
             )
         )
     }
