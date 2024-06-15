@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
@@ -32,8 +31,6 @@ import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.components.AppBar
 import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
 import com.kodeco.android.countryinfo.ui.components.Loading
-import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
-import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 
@@ -41,8 +38,7 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 fun CountryDetailsScreen(
     countryName: String,
     countryDetailsViewModel: CountryDetailsViewModel,
-    tapInfoViewModel: TapInfoViewModel,
-    navController: NavHostController?,
+    onBackClicked: () -> Unit,
 ) {
     val state by countryDetailsViewModel.state.collectAsState()
 
@@ -52,34 +48,28 @@ fun CountryDetailsScreen(
     }
 
     BackHandler {
-        tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
-        navController?.navigateUp()
+        onBackClicked()
     }
 
-    if (state.isLoading) Loading()
-    else if (state.error != null) CountryErrorScreen(state.error!!)
-    else if (state.country != null) CountryDetails(
-        tapInfoViewModel,
-        navController,
-        state.country!!
-    )
+    when {
+        state.isLoading -> Loading()
+        state.error != null -> CountryErrorScreen(state.error!!)
+        state.country != null -> CountryDetails(state.country!!, onBackClicked)
+    }
 }
 
 @Composable
 private fun CountryDetails(
-    tapInfoViewModel: TapInfoViewModel,
-    navController: NavHostController?,
-    country: Country
+    country: Country,
+    onBackClicked: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             AppBar(
                 title = country.name.common,
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack
-            ) {
-                tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
-                navController?.navigateUp()
-            }
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                iconClickAction = onBackClicked
+            )
         }
     ) { innerPadding ->
         Card(
@@ -128,15 +118,14 @@ private fun CountryDetails(
 fun CountryDetailsPreview() {
     MyApplicationTheme {
         CountryDetails(
-            tapInfoViewModel = TapInfoViewModel(),
-            navController = null,
             country = Country(
                 name = CountryName("Tajikistan"),
                 capital = listOf("Dushanbe"),
                 population = 10_000_000,
                 area = 300_000.0,
                 flags = CountryFlags("tjk.png")
-            )
+            ),
+            onBackClicked = {}
         )
     }
 }

@@ -23,8 +23,8 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 @Composable
 fun CountryInfoRow(
     country: Country,
+    clickAction: (Country) -> Unit,
     modifier: Modifier = Modifier,
-    clickAction: (Country) -> Unit = {},
 ) {
     val unknown = stringResource(R.string.unknown)
 
@@ -65,7 +65,8 @@ fun CountryInfoRowPreview() {
                 population = 10_000_000,
                 area = 300_000.0,
                 flags = CountryFlags("tjk.png")
-            )
+            ),
+            clickAction = {},
         )
     }
 }

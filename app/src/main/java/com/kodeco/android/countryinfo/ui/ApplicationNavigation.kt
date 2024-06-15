@@ -118,8 +118,10 @@ fun ApplicationNavigation(repository: CountryRepository) {
 
                 CountryInfoScreen(
                     countryInfoViewModel = countryInfoViewModel,
-                    tapInfoViewModel = tapInfoViewModel,
-                    navController = navController,
+                    onCountryClicked = {
+                        tapInfoViewModel.processIntent(TapInfoIntent.Tap)
+                        navController.navigate("countryDetails/$it")
+                    },
                     navigateToAboutScreen = { navController.navigate(Screens.About.path) }
                 )
             }
@@ -141,8 +143,10 @@ fun ApplicationNavigation(repository: CountryRepository) {
                 CountryDetailsScreen(
                     countryName = country,
                     countryDetailsViewModel = viewModel,
-                    tapInfoViewModel = tapInfoViewModel,
-                    navController = navController
+                    onBackClicked = {
+                        tapInfoViewModel.processIntent(TapInfoIntent.TapBack)
+                        navController.navigateUp()
+                    },
                 )
             }
 

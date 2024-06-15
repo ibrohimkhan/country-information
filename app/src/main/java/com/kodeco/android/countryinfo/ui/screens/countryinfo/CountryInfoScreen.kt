@@ -5,19 +5,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
 import com.kodeco.android.countryinfo.ui.components.CountryInfoList
 import com.kodeco.android.countryinfo.ui.components.Loading
-import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 
 
 @Composable
 fun CountryInfoScreen(
     countryInfoViewModel: CountryInfoViewModel,
-    tapInfoViewModel: TapInfoViewModel,
-    navController: NavHostController?,
+    onCountryClicked: (String) -> Unit,
     navigateToAboutScreen: () -> Unit
 ) {
     val message = stringResource(R.string.something_went_wrong)
@@ -44,9 +41,8 @@ fun CountryInfoScreen(
         }
 
         is UiState.Success -> CountryInfoList(
-            tapInfoViewModel = tapInfoViewModel,
-            navController = navController,
             countries = (state as UiState.Success).countries,
+            onCountryClicked = onCountryClicked,
             navigateToAboutScreen = navigateToAboutScreen,
             pullRefreshState = pullRefreshState
         )
