@@ -1,5 +1,8 @@
 package com.kodeco.android.countryinfo.ui.screens.countryinfo
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,22 +32,33 @@ fun CountryInfoScreen(
         onRefresh = onReload
     )
 
-    when (state) {
-        is UiState.Initial -> Unit
+    val transition = updateTransition(
+        targetState = state,
+        label = "CountryInfoScreen"
+    )
 
-        is UiState.Loading -> Loading()
+    transition.Crossfade(
+        contentKey = { it.javaClass },
+        animationSpec = tween(800)
+    ) { currentState ->
 
-        is UiState.Error -> CountryErrorScreen(
-            message = (state as UiState.Error).throwable.message ?: message
-        ) {
-            onReload()
+        when (currentState) {
+            is UiState.Initial -> Unit
+
+            is UiState.Loading -> Loading()
+
+            is UiState.Error -> CountryErrorScreen(
+                message = currentState.throwable.message ?: message
+            ) {
+                onReload()
+            }
+
+            is UiState.Success -> CountryInfoList(
+                countries = currentState.countries,
+                onCountryClicked = onCountryClicked,
+                navigateToAboutScreen = navigateToAboutScreen,
+                pullRefreshState = pullRefreshState
+            )
         }
-
-        is UiState.Success -> CountryInfoList(
-            countries = (state as UiState.Success).countries,
-            onCountryClicked = onCountryClicked,
-            navigateToAboutScreen = navigateToAboutScreen,
-            pullRefreshState = pullRefreshState
-        )
     }
 }
