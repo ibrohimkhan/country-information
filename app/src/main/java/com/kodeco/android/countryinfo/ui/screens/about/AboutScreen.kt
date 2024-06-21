@@ -37,14 +37,14 @@ fun AboutScreen(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             iconClickAction = onBackClick
         )
-    }) { padding ->
+    }) { innerPadding ->
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(padding)
+                .padding(innerPadding)
                 .background(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     shape = MaterialTheme.shapes.extraLarge
