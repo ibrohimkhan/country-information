@@ -3,9 +3,15 @@ package com.kodeco.android.countryinfo.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,33 +30,56 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 fun CountryInfoRow(
     country: Country,
     clickAction: (Country) -> Unit,
+    onFavoriteClicked: (Country) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val unknown = stringResource(R.string.unknown)
 
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable {
-                clickAction(country)
-            },
     ) {
-        Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(8.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clickable { clickAction(country) }
         ) {
-            Text(
-                text = stringResource(R.string.name, country.name.common),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(4.dp)
-            )
-            Text(
-                text = stringResource(R.string.capital, country.capital?.firstOrNull() ?: unknown),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(4.dp)
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = stringResource(R.string.name, country.name.common),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(4.dp)
+                )
+                Text(
+                    text = stringResource(
+                        R.string.capital,
+                        country.capital?.firstOrNull() ?: unknown
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(4.dp)
+                )
+            }
+
+            FavoriteButton(
+                country = country,
+                onFavoriteClicked = onFavoriteClicked
             )
         }
+    }
+}
+
+@Composable
+fun FavoriteButton(country: Country, onFavoriteClicked: (Country) -> Unit) {
+    IconButton(onClick = { onFavoriteClicked(country) }) {
+        Icon(
+            imageVector = if (country.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+            contentDescription = "Favorite"
+        )
     }
 }
 
@@ -67,6 +96,7 @@ fun CountryInfoRowPreview() {
                 flags = CountryFlags("tjk.png")
             ),
             clickAction = {},
+            onFavoriteClicked = {},
         )
     }
 }

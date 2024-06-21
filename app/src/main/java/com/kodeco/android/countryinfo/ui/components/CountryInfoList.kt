@@ -25,6 +25,7 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 fun CountryInfoList(
     countries: List<Country>,
     onCountryClicked: (String) -> Unit,
+    onFavoriteClicked: (Country) -> Unit,
     navigateToAboutScreen: () -> Unit,
     pullRefreshState: PullRefreshState
 ) {
@@ -43,11 +44,14 @@ fun CountryInfoList(
                 .pullRefresh(pullRefreshState)
         ) {
             LazyColumn {
-                items(countries) {
+                items(countries) { country ->
                     CountryInfoRow(
-                        country = it,
-                        clickAction = { item ->
-                            onCountryClicked(item.name.common)
+                        country = country,
+                        clickAction = {
+                            onCountryClicked(country.name.common)
+                        },
+                        onFavoriteClicked = {
+                            onFavoriteClicked(country)
                         },
                         modifier = Modifier.padding(8.dp)
                     )
@@ -86,6 +90,7 @@ fun CountryInfoListPreview() {
                 ),
             ),
             onCountryClicked = {},
+            onFavoriteClicked = {},
             navigateToAboutScreen = {},
             pullRefreshState = rememberPullRefreshState(
                 refreshing = false,

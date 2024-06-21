@@ -22,6 +22,7 @@ sealed class UiState {
 // Intent
 sealed class CountryInfoIntent {
     object LoadCountries : CountryInfoIntent()
+    data class FavoriteCountry(val country: Country) : CountryInfoIntent()
 }
 
 class CountryInfoViewModel(
@@ -39,6 +40,7 @@ class CountryInfoViewModel(
         viewModelScope.launch {
             when (intent) {
                 is CountryInfoIntent.LoadCountries -> loadCountries()
+                is CountryInfoIntent.FavoriteCountry -> favorite(intent.country)
             }
         }
     }
@@ -56,9 +58,7 @@ class CountryInfoViewModel(
             }
     }
 
-    fun favorite(country: Country) {
-        viewModelScope.launch {
-            repository.favorite(country)
-        }
+    private fun favorite(country: Country) {
+        repository.favorite(country)
     }
 }

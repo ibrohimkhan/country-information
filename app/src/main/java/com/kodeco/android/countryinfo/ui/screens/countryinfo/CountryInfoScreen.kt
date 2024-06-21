@@ -54,6 +54,9 @@ fun CountryInfoScreen(
             is UiState.Success -> CountryInfoList(
                 countries = currentState.countries,
                 onCountryClicked = onCountryClicked,
+                onFavoriteClicked = { country ->
+                    countryInfoViewModel.processIntent(CountryInfoIntent.FavoriteCountry(country))
+                },
                 navigateToAboutScreen = navigateToAboutScreen,
                 pullRefreshState = pullRefreshState
             )
