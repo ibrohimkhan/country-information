@@ -1,12 +1,10 @@
 package com.kodeco.android.countryinfo.ui.screens.countrydetails
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.repository.CountryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 
 // State
@@ -29,14 +27,12 @@ class CountryDetailsViewModel(
     val state = _state.asStateFlow()
 
     fun processIntent(intent: CountryDetailsIntent) {
-        viewModelScope.launch {
-            when (intent) {
-                is CountryDetailsIntent.LoadCountryDetails -> loadCountryDetails(intent.countryName)
-            }
+        when (intent) {
+            is CountryDetailsIntent.LoadCountryDetails -> loadCountryDetails(intent.countryName)
         }
     }
 
-    private suspend fun loadCountryDetails(countryName: String) {
+    private fun loadCountryDetails(countryName: String) {
         _state.value = _state.value.copy(isLoading = true, error = null)
 
         try {

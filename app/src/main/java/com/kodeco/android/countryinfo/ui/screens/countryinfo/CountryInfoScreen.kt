@@ -43,8 +43,6 @@ fun CountryInfoScreen(
     ) { currentState ->
 
         when (currentState) {
-            is UiState.Initial -> Unit
-
             is UiState.Loading -> Loading()
 
             is UiState.Error -> CountryErrorScreen(

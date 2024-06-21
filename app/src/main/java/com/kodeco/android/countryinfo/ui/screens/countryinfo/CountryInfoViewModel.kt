@@ -17,8 +17,6 @@ sealed class UiState {
     data class Error(val throwable: Throwable) : UiState()
 
     data object Loading : UiState()
-
-    data object Initial : UiState()
 }
 
 // Intent
@@ -30,7 +28,7 @@ class CountryInfoViewModel(
     private val repository: CountryRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.Initial)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -45,17 +43,22 @@ class CountryInfoViewModel(
         }
     }
 
-    private fun loadCountries() {
+    private suspend fun loadCountries() {
         _uiState.value = UiState.Loading
 
+        repository.fetchCountries()
+        repository.countries
+            .catch {
+                _uiState.value = UiState.Error(it)
+            }
+            .collect {
+                _uiState.value = UiState.Success(it)
+            }
+    }
+
+    fun favorite(country: Country) {
         viewModelScope.launch {
-            repository.fetchCountries()
-                .catch {
-                    _uiState.value = UiState.Error(it)
-                }
-                .collect {
-                    _uiState.value = UiState.Success(it)
-                }
+            repository.favorite(country)
         }
     }
 }
