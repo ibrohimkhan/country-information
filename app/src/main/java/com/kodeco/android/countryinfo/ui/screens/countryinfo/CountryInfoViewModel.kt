@@ -48,14 +48,19 @@ class CountryInfoViewModel(
     private suspend fun loadCountries() {
         _uiState.value = UiState.Loading
 
-        repository.fetchCountries()
-        repository.countries
-            .catch {
-                _uiState.value = UiState.Error(it)
-            }
-            .collect {
-                _uiState.value = UiState.Success(it)
-            }
+        try {
+            repository.fetchCountries()
+            repository.countries
+                .catch {
+                    _uiState.value = UiState.Error(it)
+                }
+                .collect {
+                    _uiState.value = UiState.Success(it)
+                }
+
+        } catch (e: Exception) {
+            _uiState.value = UiState.Error(e)
+        }
     }
 
     private fun favorite(country: Country) {
