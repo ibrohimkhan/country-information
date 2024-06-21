@@ -1,14 +1,13 @@
 package com.kodeco.android.countryinfo.ui.screens.about
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,33 +37,31 @@ fun AboutScreen(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             iconClickAction = onBackClick
         )
-    }) {
-        Card(
-            modifier = Modifier.padding(it)
+    }) { padding ->
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(padding)
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = MaterialTheme.shapes.extraLarge
+                )
+                .padding(16.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.about_app_text),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
+            Text(
+                text = stringResource(R.string.about_app_text),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(16.dp)
+            )
 
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = stringResource(R.string.application_version, versionName),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-
-                Spacer(modifier = Modifier.padding(16.dp))
-            }
+            Text(
+                text = stringResource(R.string.application_version, versionName),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
