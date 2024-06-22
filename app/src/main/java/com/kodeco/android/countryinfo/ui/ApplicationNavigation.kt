@@ -1,6 +1,12 @@
 package com.kodeco.android.countryinfo.ui
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -104,6 +110,8 @@ fun ApplicationNavigation(repository: CountryRepository) {
         NavHost(
             navController = navController,
             startDestination = "countries",
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
             modifier = Modifier.padding(it)
         ) {
             composable(route = Screens.CountryList.path) {
@@ -128,6 +136,18 @@ fun ApplicationNavigation(repository: CountryRepository) {
                         type = NavType.StringType
                     },
                 ),
+                enterTransition = {
+                    slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Up
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down
+                    )
+                }
             ) {
                 LaunchedEffect(null) {
                     bottomBarVisibility = false
@@ -155,7 +175,21 @@ fun ApplicationNavigation(repository: CountryRepository) {
                 )
             }
 
-            composable(route = Screens.About.path) {
+            composable(
+                route = Screens.About.path,
+                enterTransition = {
+                    slideIntoContainer(
+                        animationSpec = tween(500, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        animationSpec = tween(400, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left
+                    )
+                }
+            ) {
                 LaunchedEffect(null) {
                     bottomBarVisibility = false
                 }
