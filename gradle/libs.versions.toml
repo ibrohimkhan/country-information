@@ -21,6 +21,7 @@ moshi = "1.15.1"
 coil = "2.4.0"
 navigation = "2.7.7"
 espresso = "3.5.1"
+lottieVersion = "6.4.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -65,6 +66,9 @@ retrofit-moshi = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "mo
 retrofit-moshi-converter = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 moshiCodeGen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 retrofit-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "retrofit-logging" }
+
+# Lottie
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieVersion" }
 
 
 [plugins]

@@ -82,6 +82,9 @@ dependencies {
 
     ksp (libs.moshiCodeGen)
 
+    // Lottie
+    implementation(libs.lottie.compose)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.ext.junit)

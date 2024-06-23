@@ -1,5 +1,6 @@
 package com.kodeco.android.countryinfo.ui.screens.countryinfo
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -18,8 +19,13 @@ import com.kodeco.android.countryinfo.ui.components.Loading
 fun CountryInfoScreen(
     countryInfoViewModel: CountryInfoViewModel,
     onCountryClicked: (String) -> Unit,
-    navigateToAboutScreen: () -> Unit
+    navigateToAboutScreen: () -> Unit,
+    backPressed: () -> Unit
 ) {
+    BackHandler {
+        backPressed()
+    }
+
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
 
