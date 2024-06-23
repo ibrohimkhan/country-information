@@ -1,4 +1,4 @@
-package com.kodeco.android.countryinfo.ui.screens.splash
+package com.kodeco.android.countryinfo.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,9 +16,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kodeco.android.countryinfo.R
 
 @Composable
-fun SplashScreen(
-    navigateTo: () -> Unit
-) {
+fun SplashScreen() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -33,15 +31,11 @@ fun SplashScreen(
             composition = composition,
             progress = { logoAnimationState.progress }
         )
-
-        if (logoAnimationState.isAtEnd && logoAnimationState.isPlaying) {
-            navigateTo()
-        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SplashScreenPreview() {
-    SplashScreen {}
+    SplashScreen()
 }

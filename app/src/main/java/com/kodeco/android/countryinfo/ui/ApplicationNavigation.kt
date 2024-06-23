@@ -44,7 +44,6 @@ import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsVi
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModel
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModelFactory
-import com.kodeco.android.countryinfo.ui.screens.splash.SplashScreen
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
@@ -54,7 +53,7 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 const val COUNTRY_KEY = "countryName"
 
 @Composable
-fun ApplicationNavigation(repository: CountryRepository, closeApp: () -> Unit) {
+fun ApplicationNavigation(repository: CountryRepository) {
     val navController = rememberNavController()
 
     val countryInfoViewModel: CountryInfoViewModel = viewModel(
@@ -67,7 +66,7 @@ fun ApplicationNavigation(repository: CountryRepository, closeApp: () -> Unit) {
 
     val tapInfoViewModel: TapInfoViewModel = viewModel()
 
-    var bottomBarVisibility by rememberSaveable { mutableStateOf(false) }
+    var bottomBarVisibility by rememberSaveable { mutableStateOf(true) }
     val items = listOf(Screens.CountryList, Screens.TapInfo)
 
     Scaffold(
@@ -109,21 +108,11 @@ fun ApplicationNavigation(repository: CountryRepository, closeApp: () -> Unit) {
     ) {
         NavHost(
             navController = navController,
-            startDestination = Screens.Splash.path,
+            startDestination = Screens.CountryList.path,
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
             modifier = Modifier.padding(it)
         ) {
-            composable(route = Screens.Splash.path) {
-                LaunchedEffect(null) {
-                    bottomBarVisibility = false
-                }
-
-                SplashScreen {
-                    navController.navigate(Screens.CountryList.path)
-                }
-            }
-
             composable(route = Screens.CountryList.path) {
                 LaunchedEffect(null) {
                     bottomBarVisibility = true
@@ -135,9 +124,8 @@ fun ApplicationNavigation(repository: CountryRepository, closeApp: () -> Unit) {
                         tapInfoViewModel.processIntent(TapInfoIntent.Tap)
                         navController.navigate("countryDetails/$it")
                     },
-                    navigateToAboutScreen = { navController.navigate(Screens.About.path) },
-                    backPressed = {
-                        closeApp()
+                    navigateToAboutScreen = {
+                        navController.navigate(Screens.About.path)
                     }
                 )
             }
@@ -226,7 +214,7 @@ fun ApplicationNavigationPreview() {
             modifier = Modifier.fillMaxSize(),
             color = Color.White
         ) {
-            ApplicationNavigation(repository) {}
+            ApplicationNavigation(repository)
         }
     }
 }
