@@ -60,7 +60,7 @@ fun CountryDetailsScreen(
     }
 
     when {
-        state.isLoading -> Loading()
+        state.isLoading -> Loading(withShimmerAnimation = false)
         state.error != null -> CountryErrorScreen(state.error!!)
         state.country != null -> CountryDetails(state.country!!, onBackClicked)
     }
