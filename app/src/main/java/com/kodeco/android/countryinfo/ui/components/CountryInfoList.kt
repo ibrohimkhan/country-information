@@ -16,8 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.model.Country
-import com.kodeco.android.countryinfo.model.CountryFlags
-import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.screens.Screens
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
@@ -48,7 +46,7 @@ fun CountryInfoList(
                     CountryInfoRow(
                         country = country,
                         clickAction = {
-                            onCountryClicked(country.name.common)
+                            onCountryClicked(country.commonName)
                         },
                         onFavoriteClicked = {
                             onFavoriteClicked(country)
@@ -68,25 +66,25 @@ fun CountryInfoListPreview() {
         CountryInfoList(
             countries = listOf(
                 Country(
-                    name = CountryName("Tajikistan"),
-                    capital = listOf("Dushanbe"),
+                    commonName = "Tajikistan",
+                    mainCapital = "Dushanbe",
                     population = 10_000_000,
-                    area = 300_000.0,
-                    flags = CountryFlags("tjk.png")
+                    area = 300_000.0f,
+                    flagUrl = "tjk.png"
                 ),
                 Country(
-                    name = CountryName("Uzbekistan"),
-                    capital = listOf("Tashkent"),
+                    commonName = "Uzbekistan",
+                    mainCapital = "Tashkent",
                     population = 30_000_000,
-                    area = 700_000.0,
-                    flags = CountryFlags("uz.png")
+                    area = 700_000.0f,
+                    flagUrl = "uz.png"
                 ),
                 Country(
-                    name = CountryName("Kazakhstan"),
-                    capital = listOf("Astana"),
+                    commonName = "Kazakhstan",
+                    mainCapital = "Astana",
                     population = 20_000_000,
-                    area = 1_000_000.0,
-                    flags = CountryFlags("kz.png")
+                    area = 1_000_000.0f,
+                    flagUrl = "kz.png"
                 ),
             ),
             onCountryClicked = {},

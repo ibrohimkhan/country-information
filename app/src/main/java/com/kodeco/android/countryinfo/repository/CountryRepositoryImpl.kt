@@ -23,7 +23,7 @@ class CountryRepositoryImpl(
                 countriesResponse.body()!!
                     .toMutableList()
                     .map { country ->
-                        country.copy(isFavorite = favorites.contains(country.name.common))
+                        country.copy(isFavorite = favorites.contains(country.commonName))
                     }
             } else {
                 throw Throwable("Request failed: ${countriesResponse.message()}")
@@ -34,20 +34,20 @@ class CountryRepositoryImpl(
     }
 
     override fun getCountry(name: String): Country? =
-        _countries.value.firstOrNull { country -> country.name.common == name }
+        _countries.value.firstOrNull { country -> country.commonName == name }
 
     override fun favorite(country: Country) {
-        favorites = if (favorites.contains(country.name.common)) {
-            favorites - country.name.common
+        favorites = if (favorites.contains(country.commonName)) {
+            favorites - country.commonName
         } else {
-            favorites + country.name.common
+            favorites + country.commonName
         }
 
         val mutableCountries = _countries.value.toMutableList()
         val index = _countries.value.indexOf(country)
 
         mutableCountries[index] = mutableCountries[index]
-            .copy(isFavorite = favorites.contains(country.name.common))
+            .copy(isFavorite = favorites.contains(country.commonName))
 
         _countries.value = mutableCountries.toList()
     }

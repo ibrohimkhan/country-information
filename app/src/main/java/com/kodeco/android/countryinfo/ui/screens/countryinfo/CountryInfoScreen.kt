@@ -44,7 +44,7 @@ fun CountryInfoScreen(
     ) { currentState ->
 
         when (currentState) {
-            is UiState.Loading -> Loading(withShimmerAnimation = true)
+            is UiState.Loading -> Loading()
 
             is UiState.Error -> CountryErrorScreen(
                 message = currentState.throwable.message ?: message
