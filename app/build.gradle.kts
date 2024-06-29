@@ -82,7 +82,13 @@ dependencies {
     // Lottie
     implementation(libs.lottie.compose)
 
+    // Room
+    implementation(libs.room)
+    ksp(libs.roomCompiler)
+    implementation(libs.roomKtx)
+
     testImplementation(libs.junit)
+    testImplementation(libs.roomTesting)
 
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso)
