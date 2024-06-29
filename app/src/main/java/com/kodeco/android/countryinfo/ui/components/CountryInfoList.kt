@@ -33,7 +33,7 @@ fun CountryInfoList(
     Scaffold(topBar = {
         CustomAppBar(
             title = stringResource(R.string.countries_screen),
-            icon = Screens.About.icon,
+            icon = Screens.About.icon!!,
             iconClickAction = navigateToAboutScreen
         )
     }) {

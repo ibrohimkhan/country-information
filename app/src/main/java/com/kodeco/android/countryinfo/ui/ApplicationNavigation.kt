@@ -48,6 +48,7 @@ import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
+import kotlinx.coroutines.delay
 
 
 const val COUNTRY_KEY = "countryName"
@@ -66,7 +67,7 @@ fun ApplicationNavigation(repository: CountryRepository) {
 
     val tapInfoViewModel: TapInfoViewModel = viewModel()
 
-    var bottomBarVisibility by rememberSaveable { mutableStateOf(true) }
+    var bottomBarVisibility by rememberSaveable { mutableStateOf(false) }
     val items = listOf(Screens.CountryList, Screens.TapInfo)
 
     Scaffold(
@@ -81,10 +82,12 @@ fun ApplicationNavigation(repository: CountryRepository) {
                     items.forEach { screen ->
                         NavigationBarItem(
                             icon = {
-                                Icon(
-                                    imageVector = screen.icon,
-                                    contentDescription = screen.name
-                                )
+                                screen.icon?.let {
+                                    Icon(
+                                        imageVector = it,
+                                        contentDescription = screen.name
+                                    )
+                                }
                             },
                             label = {
                                 Text(text = screen.name)
@@ -108,11 +111,29 @@ fun ApplicationNavigation(repository: CountryRepository) {
     ) {
         NavHost(
             navController = navController,
-            startDestination = Screens.CountryList.path,
+            startDestination = Screens.Splash.path,
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
             modifier = Modifier.padding(it)
         ) {
+            composable(route = Screens.Splash.path) {
+                LaunchedEffect(null) {
+                    bottomBarVisibility = false
+
+                    delay(3000)
+
+                    navController.navigate(Screens.CountryList.path) {
+                        popUpTo(Screens.Splash.path) {
+                            inclusive = true
+                        }
+
+                        launchSingleTop = true
+                    }
+                }
+
+                SplashScreen()
+            }
+
             composable(route = Screens.CountryList.path) {
                 LaunchedEffect(null) {
                     bottomBarVisibility = true
