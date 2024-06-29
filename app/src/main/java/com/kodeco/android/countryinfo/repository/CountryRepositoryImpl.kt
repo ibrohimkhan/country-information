@@ -1,28 +1,54 @@
 package com.kodeco.android.countryinfo.repository
 
-import android.util.Log
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.networking.RemoteApiService
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class CountryRepositoryImpl(
     private val apiService: RemoteApiService,
-    private var countries: List<Country> = emptyList()
 ) : CountryRepository {
 
-    override fun fetchCountries(): Flow<List<Country>> = flow {
-        try {
-            val result = apiService.getAllCountries()
-            countries = result
-            emit(result)
+    private val _countries = MutableStateFlow(emptyList<Country>())
+    override val countries = _countries.asStateFlow()
 
+    private var favorites = setOf<String>()
+
+    override suspend fun fetchCountries() {
+        val countriesResponse = apiService.getAllCountries()
+        _countries.value = emptyList()
+
+        _countries.value = try {
+            if (countriesResponse.isSuccessful) {
+                countriesResponse.body()!!
+                    .toMutableList()
+                    .map { country ->
+                        country.copy(isFavorite = favorites.contains(country.name.common))
+                    }
+            } else {
+                throw Throwable("Request failed: ${countriesResponse.message()}")
+            }
         } catch (e: Exception) {
-            Log.e("CountryRepository", "Error fetching countries: ${e.message}")
-            throw e
+            throw Throwable("Request failed: ${e.message}")
         }
     }
 
-    override suspend fun getCountry(name: String): Country? =
-        countries.firstOrNull { country -> country.name.common == name }
+    override fun getCountry(name: String): Country? =
+        _countries.value.firstOrNull { country -> country.name.common == name }
+
+    override fun favorite(country: Country) {
+        favorites = if (favorites.contains(country.name.common)) {
+            favorites - country.name.common
+        } else {
+            favorites + country.name.common
+        }
+
+        val mutableCountries = _countries.value.toMutableList()
+        val index = _countries.value.indexOf(country)
+
+        mutableCountries[index] = mutableCountries[index]
+            .copy(isFavorite = favorites.contains(country.name.common))
+
+        _countries.value = mutableCountries.toList()
+    }
 }

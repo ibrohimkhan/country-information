@@ -25,9 +25,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            isMinifyEnabled = false
-        }
         release {
             isMinifyEnabled = true
             proguardFiles(
@@ -81,6 +78,9 @@ dependencies {
     implementation(libs.coroutines.android)
 
     ksp (libs.moshiCodeGen)
+
+    // Lottie
+    implementation(libs.lottie.compose)
 
     testImplementation(libs.junit)
 

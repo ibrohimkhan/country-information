@@ -18,8 +18,9 @@ import com.kodeco.android.countryinfo.ui.components.Loading
 fun CountryInfoScreen(
     countryInfoViewModel: CountryInfoViewModel,
     onCountryClicked: (String) -> Unit,
-    navigateToAboutScreen: () -> Unit
+    navigateToAboutScreen: () -> Unit,
 ) {
+
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
 
@@ -43,9 +44,7 @@ fun CountryInfoScreen(
     ) { currentState ->
 
         when (currentState) {
-            is UiState.Initial -> Unit
-
-            is UiState.Loading -> Loading()
+            is UiState.Loading -> Loading(withShimmerAnimation = true)
 
             is UiState.Error -> CountryErrorScreen(
                 message = currentState.throwable.message ?: message
@@ -56,6 +55,9 @@ fun CountryInfoScreen(
             is UiState.Success -> CountryInfoList(
                 countries = currentState.countries,
                 onCountryClicked = onCountryClicked,
+                onFavoriteClicked = { country ->
+                    countryInfoViewModel.processIntent(CountryInfoIntent.FavoriteCountry(country))
+                },
                 navigateToAboutScreen = navigateToAboutScreen,
                 pullRefreshState = pullRefreshState
             )
