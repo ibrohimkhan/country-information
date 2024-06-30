@@ -14,6 +14,9 @@ interface CountryDao {
     @Query("select * from country")
     fun getAll(): Flow<List<Country>>
 
+    @Query("select * from country where commonName = :name")
+    suspend fun getCountryByName(name: String): Country?
+
     @Query("select * from country where is_favorite = 1")
     fun getFavorites(): Flow<List<Country>?>
 

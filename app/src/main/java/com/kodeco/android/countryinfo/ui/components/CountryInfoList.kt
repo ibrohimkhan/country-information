@@ -25,7 +25,7 @@ fun CountryInfoList(
     onCountryClicked: (String) -> Unit,
     onFavoriteClicked: (Country) -> Unit,
     navigateToAboutScreen: () -> Unit,
-    pullRefreshState: PullRefreshState
+    pullRefreshState: PullRefreshState,
 ) {
 
     Scaffold(topBar = {

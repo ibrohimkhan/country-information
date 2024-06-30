@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.kodeco.android.countryinfo.repository.CountryRepository
 
 class CountryDetailsViewModelFactory(
-    private val repository: CountryRepository
+    private val countryRepository: CountryRepository
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        CountryDetailsViewModel(repository) as T
+        CountryDetailsViewModel(countryRepository) as T
 }

@@ -21,12 +21,12 @@ sealed class UiState {
 
 // Intent
 sealed class CountryInfoIntent {
-    object LoadCountries : CountryInfoIntent()
+    data object LoadCountries : CountryInfoIntent()
     data class FavoriteCountry(val country: Country) : CountryInfoIntent()
 }
 
 class CountryInfoViewModel(
-    private val repository: CountryRepository
+    private val countryRepository: CountryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
@@ -49,21 +49,23 @@ class CountryInfoViewModel(
         _uiState.value = UiState.Loading
 
         try {
-            repository.fetchCountries()
-            repository.countries
+            countryRepository.fetchCountries()
+
+            countryRepository.countries
                 .catch {
                     _uiState.value = UiState.Error(it)
                 }
                 .collect {
                     _uiState.value = UiState.Success(it)
+                    countryRepository.saveCountries(it)
                 }
 
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             _uiState.value = UiState.Error(e)
         }
     }
 
     private fun favorite(country: Country) {
-        repository.favorite(country)
+        countryRepository.favorite(country)
     }
 }

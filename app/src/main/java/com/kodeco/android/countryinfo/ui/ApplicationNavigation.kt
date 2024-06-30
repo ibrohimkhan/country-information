@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -33,9 +34,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.kodeco.android.countryinfo.data.db.CountriesDatabase
 import com.kodeco.android.countryinfo.networking.buildApiService
 import com.kodeco.android.countryinfo.repository.CountryRepository
 import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
+import com.kodeco.android.countryinfo.repository.local.CountryLocalDataSourceImpl
+import com.kodeco.android.countryinfo.repository.remote.CountryRemoteDataSourceImpl
 import com.kodeco.android.countryinfo.ui.screens.Screens
 import com.kodeco.android.countryinfo.ui.screens.about.AboutScreen
 import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsScreen
@@ -54,15 +58,17 @@ import kotlinx.coroutines.delay
 const val COUNTRY_KEY = "countryName"
 
 @Composable
-fun ApplicationNavigation(repository: CountryRepository) {
+fun ApplicationNavigation(
+    countryRepository: CountryRepository,
+) {
     val navController = rememberNavController()
 
     val countryInfoViewModel: CountryInfoViewModel = viewModel(
-        factory = CountryInfoViewModelFactory(repository)
+        factory = CountryInfoViewModelFactory(countryRepository)
     )
 
     val viewModel: CountryDetailsViewModel = viewModel(
-        factory = CountryDetailsViewModelFactory(repository)
+        factory = CountryDetailsViewModelFactory(countryRepository)
     )
 
     val tapInfoViewModel: TapInfoViewModel = viewModel()
@@ -228,14 +234,20 @@ fun ApplicationNavigation(repository: CountryRepository) {
 @Preview(showBackground = true)
 @Composable
 fun ApplicationNavigationPreview() {
-    val repository = CountryRepositoryImpl(buildApiService())
+    val remoteDataSource = CountryRemoteDataSourceImpl(buildApiService())
+
+    val localDataSource = CountryLocalDataSourceImpl(
+        CountriesDatabase.getCountriesDatabase(LocalContext.current).countryDao()
+    )
+
+    val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource)
 
     MyApplicationTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.White
         ) {
-            ApplicationNavigation(repository)
+            ApplicationNavigation(countryRepository)
         }
     }
 }
