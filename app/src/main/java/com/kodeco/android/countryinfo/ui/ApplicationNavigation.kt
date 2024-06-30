@@ -35,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kodeco.android.countryinfo.data.db.CountriesDatabase
+import com.kodeco.android.countryinfo.data.store.CountryPrefsImpl
 import com.kodeco.android.countryinfo.networking.buildApiService
 import com.kodeco.android.countryinfo.repository.CountryRepository
 import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
@@ -240,7 +241,9 @@ fun ApplicationNavigationPreview() {
         CountriesDatabase.getCountriesDatabase(LocalContext.current).countryDao()
     )
 
-    val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource)
+    val prefs = CountryPrefsImpl(LocalContext.current)
+
+    val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource, prefs)
 
     MyApplicationTheme {
         Surface(

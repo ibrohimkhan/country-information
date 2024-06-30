@@ -1,5 +1,6 @@
 package com.kodeco.android.countryinfo.repository
 
+import com.kodeco.android.countryinfo.data.store.CountryPrefs
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.repository.local.CountryLocalDataSource
 import com.kodeco.android.countryinfo.repository.remote.CountryRemoteDataSource
@@ -9,7 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 class CountryRepositoryImpl(
     private val remoteDataSource: CountryRemoteDataSource,
     private val localDataSource: CountryLocalDataSource,
-): CountryRepository {
+    private val prefs: CountryPrefs,
+) : CountryRepository {
 
     private val _countries = MutableStateFlow(emptyList<Country>())
     override val countries = _countries.asStateFlow()
@@ -42,9 +44,11 @@ class CountryRepositoryImpl(
     override suspend fun saveCountries(countries: List<Country>) = localDataSource
         .addCountry(*countries.toTypedArray())
 
-    override suspend fun getCountries() = localDataSource.getAllCountriesFlow().collect { value ->
-        value?.let { _countries.value = it }
-    }
+    override suspend fun getCountries() = localDataSource
+        .getAllCountriesFlow()
+        .collect { value ->
+            value?.let { _countries.value = it }
+        }
 
     override fun getCountry(name: String): Country? =
         _countries.value.firstOrNull { country -> country.commonName == name }
