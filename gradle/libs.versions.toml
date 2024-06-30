@@ -23,6 +23,7 @@ navigation = "2.7.7"
 espresso = "3.6.1"
 lottieVersion = "6.4.1"
 roomVersion = "2.6.1"
+datastoreVersion = "1.1.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -76,6 +77,9 @@ room = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
 roomCompiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 roomKtx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
 roomTesting = { module = "androidx.room:room-testing", version.ref = "roomVersion" }
+
+# DataStore
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastoreVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

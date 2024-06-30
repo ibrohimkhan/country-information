@@ -87,6 +87,9 @@ dependencies {
     ksp(libs.roomCompiler)
     implementation(libs.roomKtx)
 
+    // DataStore
+    implementation(libs.datastore.preferences)
+
     testImplementation(libs.junit)
     testImplementation(libs.roomTesting)
 

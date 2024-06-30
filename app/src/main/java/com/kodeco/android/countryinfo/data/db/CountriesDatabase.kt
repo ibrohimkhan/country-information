@@ -10,7 +10,8 @@ const val DATABASE_VERSION = 1
 
 @Database(
     entities = [Country::class],
-    version = DATABASE_VERSION
+    version = DATABASE_VERSION,
+    exportSchema = false
 )
 abstract class CountriesDatabase : RoomDatabase() {
     abstract fun countryDao(): CountryDao
