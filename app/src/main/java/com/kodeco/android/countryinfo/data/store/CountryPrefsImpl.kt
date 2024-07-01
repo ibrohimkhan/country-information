@@ -1,47 +1,56 @@
 package com.kodeco.android.countryinfo.data.store
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 
 private const val STORE_NAME = "country_prefs"
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = STORE_NAME)
 
-class CountryPrefsImpl(context: Context) : CountryPrefs {
+object PrefsKeys {
+    val STORAGE_KEY = booleanPreferencesKey("storage_key")
+    val FAVORITES_KEY = booleanPreferencesKey("favorites_key")
+    val ROTATION_KEY = booleanPreferencesKey("rotation_key")
+}
 
-    private val Context.dataStore by preferencesDataStore(name = STORE_NAME)
-    private val dataStore = context.dataStore
+class CountryPrefsImpl(private val context: Context) : CountryPrefs {
 
-    val isStorageEnabled = booleanPreferencesKey("isStorageEnabled")
-    val isFavoritesFeatureEnabled = booleanPreferencesKey("isFavoritesFeatureEnabled")
-
-    override fun getLocalStorageEnabled(): Flow<Boolean> = flow {
-        dataStore.data.map {
-            it[isStorageEnabled] ?: false
-        }
+    override fun getLocalStorageEnabled(): Flow<Boolean> = context.dataStore.data.map {
+        it[PrefsKeys.STORAGE_KEY] ?: false
     }
 
-    override fun getFavoritesFeatureEnabled(): Flow<Boolean> = flow {
-        dataStore.data.map {
-            it[isFavoritesFeatureEnabled] ?: false
-        }
+    override fun getFavoritesFeatureEnabled(): Flow<Boolean> = context.dataStore.data.map {
+        it[PrefsKeys.FAVORITES_KEY] ?: false
+    }
+
+    override fun getScreenRotationEnabled(): Flow<Boolean> = context.dataStore.data.map {
+        it[PrefsKeys.ROTATION_KEY] ?: false
     }
 
     override suspend fun toggleLocalStorage() {
-        dataStore.edit { value ->
-            val currentValue = value[isStorageEnabled] ?: false
-            value[isStorageEnabled] = !currentValue
+        context.dataStore.edit { preferences ->
+            val currentValue = preferences[PrefsKeys.STORAGE_KEY] ?: false
+            preferences[PrefsKeys.STORAGE_KEY] = !currentValue
         }
     }
 
     override suspend fun toggleFavoritesFeature() {
-        dataStore.edit { value ->
-            val currentValue = value[isFavoritesFeatureEnabled] ?: false
-            value[isFavoritesFeatureEnabled] = !currentValue
+        context.dataStore.edit { preferences ->
+            val currentValue = preferences[PrefsKeys.FAVORITES_KEY] ?: false
+            preferences[PrefsKeys.FAVORITES_KEY] = !currentValue
+        }
+    }
+
+    override suspend fun toggleScreenRotation() {
+        context.dataStore.edit { preferences ->
+            val currentValue = preferences[PrefsKeys.ROTATION_KEY] ?: false
+            preferences[PrefsKeys.ROTATION_KEY] = !currentValue
         }
     }
 }

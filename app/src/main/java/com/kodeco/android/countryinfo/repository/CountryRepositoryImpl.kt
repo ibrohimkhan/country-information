@@ -1,6 +1,5 @@
 package com.kodeco.android.countryinfo.repository
 
-import com.kodeco.android.countryinfo.data.store.CountryPrefs
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.repository.local.CountryLocalDataSource
 import com.kodeco.android.countryinfo.repository.remote.CountryRemoteDataSource
@@ -10,7 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 class CountryRepositoryImpl(
     private val remoteDataSource: CountryRemoteDataSource,
     private val localDataSource: CountryLocalDataSource,
-    private val prefs: CountryPrefs,
 ) : CountryRepository {
 
     private val _countries = MutableStateFlow(emptyList<Country>())

@@ -35,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kodeco.android.countryinfo.data.db.CountriesDatabase
+import com.kodeco.android.countryinfo.data.store.CountryPrefs
 import com.kodeco.android.countryinfo.data.store.CountryPrefsImpl
 import com.kodeco.android.countryinfo.networking.buildApiService
 import com.kodeco.android.countryinfo.repository.CountryRepository
@@ -49,6 +50,10 @@ import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsVi
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModel
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModelFactory
+import com.kodeco.android.countryinfo.ui.screens.settings.SettingsScreen
+import com.kodeco.android.countryinfo.ui.screens.settings.SettingsViewModel
+import com.kodeco.android.countryinfo.ui.screens.settings.SettingsViewModelFactory
+import com.kodeco.android.countryinfo.ui.screens.splash.SplashScreen
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
@@ -61,6 +66,7 @@ const val COUNTRY_KEY = "countryName"
 @Composable
 fun ApplicationNavigation(
     countryRepository: CountryRepository,
+    countryPrefs: CountryPrefs
 ) {
     val navController = rememberNavController()
 
@@ -74,8 +80,12 @@ fun ApplicationNavigation(
 
     val tapInfoViewModel: TapInfoViewModel = viewModel()
 
+    val settingsViewModel: SettingsViewModel = viewModel(
+        factory = SettingsViewModelFactory(countryPrefs)
+    )
+
     var bottomBarVisibility by rememberSaveable { mutableStateOf(false) }
-    val items = listOf(Screens.CountryList, Screens.TapInfo)
+    val items = listOf(Screens.CountryList, Screens.TapInfo, Screens.Settings)
 
     Scaffold(
         bottomBar = {
@@ -194,6 +204,14 @@ fun ApplicationNavigation(
                 )
             }
 
+            composable(route = Screens.Settings.path) {
+                LaunchedEffect(null) {
+                    bottomBarVisibility = true
+                }
+
+                SettingsScreen(settingsViewModel)
+            }
+
             composable(route = Screens.TapInfo.path) {
                 LaunchedEffect(null) {
                     bottomBarVisibility = true
@@ -243,14 +261,14 @@ fun ApplicationNavigationPreview() {
 
     val prefs = CountryPrefsImpl(LocalContext.current)
 
-    val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource, prefs)
+    val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource)
 
     MyApplicationTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.White
         ) {
-            ApplicationNavigation(countryRepository)
+            ApplicationNavigation(countryRepository, prefs)
         }
     }
 }

@@ -16,6 +16,7 @@ import com.kodeco.android.countryinfo.repository.remote.CountryRemoteDataSourceI
 import com.kodeco.android.countryinfo.ui.ApplicationNavigation
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,9 +28,9 @@ class MainActivity : ComponentActivity() {
         val db = CountriesDatabase.getCountriesDatabase(this)
         val localDataSource = CountryLocalDataSourceImpl(db.countryDao())
 
-        val prefs = CountryPrefsImpl(this)
+        val prefs = CountryPrefsImpl(this.applicationContext)
 
-        val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource, prefs)
+        val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource)
 
         setContent {
             MyApplicationTheme {
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
                 ) {
-                    ApplicationNavigation(countryRepository)
+                    ApplicationNavigation(countryRepository, prefs)
                 }
             }
         }

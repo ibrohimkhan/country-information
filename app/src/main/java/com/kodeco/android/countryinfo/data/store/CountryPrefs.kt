@@ -5,7 +5,9 @@ import kotlinx.coroutines.flow.Flow
 interface CountryPrefs {
     fun getLocalStorageEnabled(): Flow<Boolean>
     fun getFavoritesFeatureEnabled(): Flow<Boolean>
+    fun getScreenRotationEnabled(): Flow<Boolean>
 
     suspend fun toggleLocalStorage()
     suspend fun toggleFavoritesFeature()
+    suspend fun toggleScreenRotation()
 }
