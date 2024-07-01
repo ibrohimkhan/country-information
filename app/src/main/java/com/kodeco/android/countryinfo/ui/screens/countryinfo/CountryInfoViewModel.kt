@@ -99,5 +99,9 @@ class CountryInfoViewModel(
 
     private fun favorite(country: Country) {
         countryRepository.favorite(country)
+
+        viewModelScope.launch {
+            countryRepository.updateCountry(country.copy(isFavorite = !country.isFavorite))
+        }
     }
 }

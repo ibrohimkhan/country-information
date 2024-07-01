@@ -56,6 +56,9 @@ class CountryRepositoryImpl(
             }
     }
 
+    override suspend fun updateCountry(country: Country) = localDataSource
+        .updateCountry(country)
+
     override fun getCountry(name: String): Country? =
         _countries.value.firstOrNull { country -> country.commonName == name }
 
