@@ -51,16 +51,32 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            ConfigurationItem(label = stringResource(R.string.enable_local_storage), value = state.enableLocalStorage) {
+            ConfigurationItem(
+                label = stringResource(R.string.enable_local_storage),
+                value = state.enableLocalStorage
+            ) {
                 settingsViewModel.processIntent(SettingsIntent.EnableLocalStorage(it))
             }
 
-            ConfigurationItem(label = stringResource(R.string.enable_favorites_feature), value = state.enableFavoritesFeature) {
+            ConfigurationItem(
+                label = stringResource(R.string.enable_favorites_feature),
+                value = state.enableFavoritesFeature
+            ) {
                 settingsViewModel.processIntent(SettingsIntent.EnableFavoritesFeature(it))
             }
 
-            ConfigurationItem(label = stringResource(R.string.enable_screen_rotation), value = state.enableScreenRotation) {
+            ConfigurationItem(
+                label = stringResource(R.string.enable_screen_rotation),
+                value = state.enableScreenRotation
+            ) {
                 settingsViewModel.processIntent(SettingsIntent.EnableScreenRotation(it))
+            }
+
+            ConfigurationItem(
+                label = stringResource(R.string.enable_favorite_countries),
+                value = state.enableFavoriteCountries
+            ) {
+                settingsViewModel.processIntent(SettingsIntent.EnableFavoriteCountries(it))
             }
         }
     }
@@ -93,9 +109,11 @@ fun ConfigurationItem(label: String, value: Boolean, onCheckedChange: (Boolean) 
 @Composable
 fun SettingsScreenPreview() {
     MyApplicationTheme {
-        SettingsScreen(SettingsViewModel(
-            CountryPrefsImpl(LocalContext.current)
-        ))
+        SettingsScreen(
+            SettingsViewModel(
+                CountryPrefsImpl(LocalContext.current)
+            )
+        )
     }
 }
 

@@ -17,6 +17,7 @@ object PrefsKeys {
     val STORAGE_KEY = booleanPreferencesKey("storage_key")
     val FAVORITES_KEY = booleanPreferencesKey("favorites_key")
     val ROTATION_KEY = booleanPreferencesKey("rotation_key")
+    val FAVORITE_COUNTRIES_KEY = booleanPreferencesKey("favorite_countries_key")
 }
 
 class CountryPrefsImpl(private val context: Context) : CountryPrefs {
@@ -31,6 +32,10 @@ class CountryPrefsImpl(private val context: Context) : CountryPrefs {
 
     override fun getScreenRotationEnabled(): Flow<Boolean> = context.dataStore.data.map {
         it[PrefsKeys.ROTATION_KEY] ?: false
+    }
+
+    override fun getFavoriteCountriesFeatureEnabled(): Flow<Boolean> = context.dataStore.data.map {
+        it[PrefsKeys.FAVORITE_COUNTRIES_KEY] ?: false
     }
 
     override suspend fun toggleLocalStorage() {
@@ -51,6 +56,13 @@ class CountryPrefsImpl(private val context: Context) : CountryPrefs {
         context.dataStore.edit { preferences ->
             val currentValue = preferences[PrefsKeys.ROTATION_KEY] ?: false
             preferences[PrefsKeys.ROTATION_KEY] = !currentValue
+        }
+    }
+
+    override suspend fun toggleFavoriteCountriesFeature() {
+        context.dataStore.edit { preferences ->
+            val currentValue = preferences[PrefsKeys.FAVORITE_COUNTRIES_KEY] ?: false
+            preferences[PrefsKeys.FAVORITE_COUNTRIES_KEY] = !currentValue
         }
     }
 }

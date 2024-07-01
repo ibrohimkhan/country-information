@@ -13,6 +13,7 @@ data class SettingsState(
     val enableLocalStorage: Boolean = false,
     val enableFavoritesFeature: Boolean = false,
     val enableScreenRotation: Boolean = false,
+    val enableFavoriteCountries: Boolean = false,
 )
 
 // Intent
@@ -20,6 +21,7 @@ sealed class SettingsIntent {
     data class EnableLocalStorage(val enable: Boolean) : SettingsIntent()
     data class EnableFavoritesFeature(val enable: Boolean) : SettingsIntent()
     data class EnableScreenRotation(val enable: Boolean) : SettingsIntent()
+    data class EnableFavoriteCountries(val enable: Boolean) : SettingsIntent()
 }
 
 class SettingsViewModel(
@@ -47,6 +49,12 @@ class SettingsViewModel(
                 _state.value = _state.value.copy(enableScreenRotation = enable)
             }
         }
+
+        viewModelScope.launch {
+            countryPrefs.getFavoriteCountriesFeatureEnabled().collect { enable ->
+                _state.value = _state.value.copy(enableFavoriteCountries = enable)
+            }
+        }
     }
 
     fun processIntent(intent: SettingsIntent) {
@@ -65,6 +73,11 @@ class SettingsViewModel(
                 is SettingsIntent.EnableScreenRotation -> {
                     countryPrefs.toggleScreenRotation()
                     _state.value = _state.value.copy(enableScreenRotation = intent.enable)
+                }
+
+                is SettingsIntent.EnableFavoriteCountries -> {
+                    countryPrefs.toggleFavoriteCountriesFeature()
+                    _state.value = _state.value.copy(enableFavoriteCountries = intent.enable)
                 }
             }
         }

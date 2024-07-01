@@ -23,6 +23,7 @@ fun CountryInfoScreen(
 
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
+
     val uiPrefState by countryInfoViewModel.uiPrefState.collectAsState()
 
     val onReload = {

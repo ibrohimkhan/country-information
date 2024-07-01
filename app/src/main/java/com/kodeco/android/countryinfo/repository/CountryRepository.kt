@@ -14,6 +14,7 @@ interface CountryRepository {
     suspend fun saveCountries(countries: List<Country>)
     suspend fun deleteAllCountries()
     suspend fun updateCountry(country: Country)
+    suspend fun getFavoriteCountries()
 
     // Business logic
     fun getCountry(name: String): Country?

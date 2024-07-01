@@ -56,6 +56,18 @@ class CountryRepositoryImpl(
             }
     }
 
+    override suspend fun getFavoriteCountries() {
+        _countries.value = emptyList()
+
+        localDataSource.getFavoriteCountries()
+            .catch {
+                throw Throwable("Failed to retrieve countries: ${it.message}")
+            }
+            .collect { value ->
+                _countries.value = value ?: emptyList()
+            }
+    }
+
     override suspend fun updateCountry(country: Country) = localDataSource
         .updateCountry(country)
 

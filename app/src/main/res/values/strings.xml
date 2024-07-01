@@ -23,4 +23,5 @@
     <string name="enable_local_storage">Enable Local Storage</string>
     <string name="enable_favorites_feature">Enable Favorites Feature</string>
     <string name="enable_screen_rotation">Enable Screen Rotation</string>
+    <string name="enable_favorite_countries">Enable Favorite Countries</string>
 </resources>

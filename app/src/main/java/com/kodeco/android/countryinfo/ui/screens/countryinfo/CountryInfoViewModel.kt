@@ -24,6 +24,7 @@ sealed class UiState {
 data class UiPrefState(
     val enableLocalStorage: Boolean = false,
     val enableFavoritesFeature: Boolean = false,
+    val enableFavoriteCountries: Boolean = false,
 )
 
 // Intent
@@ -57,6 +58,12 @@ class CountryInfoViewModel(
         }
 
         viewModelScope.launch {
+            countryPrefs.getFavoriteCountriesFeatureEnabled().collect { enable ->
+                _uiPrefState.value = _uiPrefState.value.copy(enableFavoriteCountries = enable)
+            }
+        }
+
+        viewModelScope.launch {
             countryRepository.countries
                 .catch {
                     _uiState.value = UiState.Error(it)
@@ -86,7 +93,12 @@ class CountryInfoViewModel(
 
         try {
             if (_uiPrefState.value.enableLocalStorage) {
-                countryRepository.getCountries()
+                if (_uiPrefState.value.enableFavoriteCountries) {
+                    countryRepository.getFavoriteCountries()
+
+                } else {
+                    countryRepository.getCountries()
+                }
 
             } else {
                 countryRepository.fetchCountries()
