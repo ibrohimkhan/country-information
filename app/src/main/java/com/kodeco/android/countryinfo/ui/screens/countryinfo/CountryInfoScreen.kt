@@ -23,6 +23,7 @@ fun CountryInfoScreen(
 
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
+    val uiPrefState by countryInfoViewModel.uiPrefState.collectAsState()
 
     val onReload = {
         countryInfoViewModel.processIntent(CountryInfoIntent.LoadCountries)
@@ -59,7 +60,8 @@ fun CountryInfoScreen(
                     countryInfoViewModel.processIntent(CountryInfoIntent.FavoriteCountry(country))
                 },
                 navigateToAboutScreen = navigateToAboutScreen,
-                pullRefreshState = pullRefreshState
+                pullRefreshState = pullRefreshState,
+                isFavoritesFeatureEnabled = uiPrefState.enableFavoritesFeature
             )
         }
     }

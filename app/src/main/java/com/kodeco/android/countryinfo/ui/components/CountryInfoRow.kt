@@ -32,6 +32,7 @@ import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 @Composable
 fun CountryInfoRow(
     country: Country,
+    isFavoritesFeatureEnabled: Boolean,
     clickAction: (Country) -> Unit,
     onFavoriteClicked: (Country) -> Unit,
     modifier: Modifier = Modifier,
@@ -65,10 +66,12 @@ fun CountryInfoRow(
             )
         }
 
-        FavoriteButton(
-            country = country,
-            onFavoriteClicked = onFavoriteClicked
-        )
+        if (isFavoritesFeatureEnabled) {
+            FavoriteButton(
+                country = country,
+                onFavoriteClicked = onFavoriteClicked
+            )
+        }
     }
 }
 
@@ -113,6 +116,7 @@ fun CountryInfoRowPreview() {
                 area = 300_000.0f,
                 flagUrl = "tjk.png",
             ),
+            isFavoritesFeatureEnabled = true,
             clickAction = {},
             onFavoriteClicked = {},
         )

@@ -26,6 +26,7 @@ fun CountryInfoList(
     onFavoriteClicked: (Country) -> Unit,
     navigateToAboutScreen: () -> Unit,
     pullRefreshState: PullRefreshState,
+    isFavoritesFeatureEnabled: Boolean,
 ) {
 
     Scaffold(topBar = {
@@ -45,6 +46,7 @@ fun CountryInfoList(
                 items(countries) { country ->
                     CountryInfoRow(
                         country = country,
+                        isFavoritesFeatureEnabled = isFavoritesFeatureEnabled,
                         clickAction = {
                             onCountryClicked(country.commonName)
                         },
@@ -93,7 +95,8 @@ fun CountryInfoListPreview() {
             pullRefreshState = rememberPullRefreshState(
                 refreshing = false,
                 onRefresh = {}
-            )
+            ),
+            isFavoritesFeatureEnabled = false,
         )
     }
 }
