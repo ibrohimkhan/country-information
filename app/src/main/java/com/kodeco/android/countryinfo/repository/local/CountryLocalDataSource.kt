@@ -14,5 +14,7 @@ interface CountryLocalDataSource {
 
     suspend fun addCountry(vararg country: Country)
 
+    suspend fun deleteAllCountries()
+
     suspend fun deleteCountry(country: Country)
 }

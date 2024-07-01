@@ -18,5 +18,7 @@ class CountryLocalDataSourceImpl(
 
     override suspend fun addCountry(vararg country: Country) = countryDao.insertAll(*country)
 
+    override suspend fun deleteAllCountries() = countryDao.deleteAll()
+
     override suspend fun deleteCountry(country: Country) = countryDao.delete(country)
 }

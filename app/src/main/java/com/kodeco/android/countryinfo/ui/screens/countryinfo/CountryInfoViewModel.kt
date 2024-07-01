@@ -2,8 +2,10 @@ package com.kodeco.android.countryinfo.ui.screens.countryinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kodeco.android.countryinfo.data.store.CountryPrefs
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.repository.CountryRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -19,6 +21,12 @@ sealed class UiState {
     data object Loading : UiState()
 }
 
+data class UiPrefState(
+    val enableLocalStorage: Boolean = false,
+    val enableFavoritesFeature: Boolean = false,
+    val enableScreenRotation: Boolean = false,
+)
+
 // Intent
 sealed class CountryInfoIntent {
     data object LoadCountries : CountryInfoIntent()
@@ -26,14 +34,49 @@ sealed class CountryInfoIntent {
 }
 
 class CountryInfoViewModel(
-    private val countryRepository: CountryRepository
+    private val countryRepository: CountryRepository,
+    private val countryPrefs: CountryPrefs
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    private val _uiPrefState = MutableStateFlow(UiPrefState())
+    val uiPrefState = _uiPrefState.asStateFlow()
+
     init {
-        processIntent(CountryInfoIntent.LoadCountries)
+        viewModelScope.launch {
+            countryPrefs.getLocalStorageEnabled().collect { enable ->
+                _uiPrefState.value = _uiPrefState.value.copy(enableLocalStorage = enable)
+            }
+        }
+
+        viewModelScope.launch {
+            countryPrefs.getFavoritesFeatureEnabled().collect { enable ->
+                _uiPrefState.value = _uiPrefState.value.copy(enableFavoritesFeature = enable)
+            }
+        }
+
+        viewModelScope.launch {
+            countryPrefs.getScreenRotationEnabled().collect { enable ->
+                _uiPrefState.value = _uiPrefState.value.copy(enableScreenRotation = enable)
+            }
+        }
+
+        viewModelScope.launch {
+            countryRepository.countries
+                .catch {
+                    _uiState.value = UiState.Error(it)
+                }
+                .collect {
+                    _uiState.value = UiState.Success(it)
+                }
+        }
+
+        viewModelScope.launch {
+            delay(1000)
+            loadCountries()
+        }
     }
 
     fun processIntent(intent: CountryInfoIntent) {
@@ -49,16 +92,12 @@ class CountryInfoViewModel(
         _uiState.value = UiState.Loading
 
         try {
-            countryRepository.fetchCountries()
+            if (_uiPrefState.value.enableLocalStorage) {
+                countryRepository.getCountries()
 
-            countryRepository.countries
-                .catch {
-                    _uiState.value = UiState.Error(it)
-                }
-                .collect {
-                    _uiState.value = UiState.Success(it)
-                    countryRepository.saveCountries(it)
-                }
+            } else {
+                countryRepository.fetchCountries()
+            }
 
         } catch (e: Throwable) {
             _uiState.value = UiState.Error(e)

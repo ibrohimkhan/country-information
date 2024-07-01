@@ -71,7 +71,7 @@ fun ApplicationNavigation(
     val navController = rememberNavController()
 
     val countryInfoViewModel: CountryInfoViewModel = viewModel(
-        factory = CountryInfoViewModelFactory(countryRepository)
+        factory = CountryInfoViewModelFactory(countryRepository, countryPrefs)
     )
 
     val viewModel: CountryDetailsViewModel = viewModel(

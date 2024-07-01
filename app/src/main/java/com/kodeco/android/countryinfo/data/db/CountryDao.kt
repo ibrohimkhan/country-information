@@ -20,6 +20,9 @@ interface CountryDao {
     @Query("select * from country where is_favorite = 1")
     fun getFavorites(): Flow<List<Country>?>
 
+    @Query("delete from country")
+    suspend fun deleteAll()
+
     @Update
     suspend fun update(country: Country)
 
