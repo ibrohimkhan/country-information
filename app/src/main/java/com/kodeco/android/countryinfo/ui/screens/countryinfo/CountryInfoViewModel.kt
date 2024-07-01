@@ -24,7 +24,6 @@ sealed class UiState {
 data class UiPrefState(
     val enableLocalStorage: Boolean = false,
     val enableFavoritesFeature: Boolean = false,
-    val enableScreenRotation: Boolean = false,
 )
 
 // Intent
@@ -54,12 +53,6 @@ class CountryInfoViewModel(
         viewModelScope.launch {
             countryPrefs.getFavoritesFeatureEnabled().collect { enable ->
                 _uiPrefState.value = _uiPrefState.value.copy(enableFavoritesFeature = enable)
-            }
-        }
-
-        viewModelScope.launch {
-            countryPrefs.getScreenRotationEnabled().collect { enable ->
-                _uiPrefState.value = _uiPrefState.value.copy(enableScreenRotation = enable)
             }
         }
 
