@@ -36,8 +36,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.model.Country
-import com.kodeco.android.countryinfo.model.CountryFlags
-import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.components.AppBar
 import com.kodeco.android.countryinfo.ui.components.CountryErrorScreen
 import com.kodeco.android.countryinfo.ui.components.Loading
@@ -60,7 +58,7 @@ fun CountryDetailsScreen(
     }
 
     when {
-        state.isLoading -> Loading(withShimmerAnimation = false)
+        state.isLoading -> Loading()
         state.error != null -> CountryErrorScreen(state.error!!)
         state.country != null -> CountryDetails(state.country!!, onBackClicked)
     }
@@ -74,7 +72,7 @@ private fun CountryDetails(
     Scaffold(
         topBar = {
             AppBar(
-                title = country.name.common,
+                title = country.commonName,
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 iconClickAction = onBackClicked
             )
@@ -97,7 +95,7 @@ private fun CountryDetails(
             Text(
                 text = stringResource(
                     R.string.capital,
-                    country.capital?.firstOrNull() ?: stringResource(R.string.unknown)
+                    country.mainCapital
                 ),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(8.dp)
@@ -117,7 +115,7 @@ private fun CountryDetails(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            AnimatedAsyncImage(country.flags.png)
+            AnimatedAsyncImage(country.flagUrl)
         }
     }
 }
@@ -165,11 +163,11 @@ fun CountryDetailsPreview() {
     MyApplicationTheme {
         CountryDetails(
             country = Country(
-                name = CountryName("Tajikistan"),
-                capital = listOf("Dushanbe"),
+                commonName = "Tajikistan",
+                mainCapital = "Dushanbe",
                 population = 10_000_000,
-                area = 300_000.0,
-                flags = CountryFlags("tjk.png")
+                area = 300_000.0f,
+                flagUrl = "tjk.png",
             ),
             onBackClicked = {}
         )

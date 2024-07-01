@@ -19,4 +19,9 @@
     <string name="about_screen">About</string>
     <string name="about_app_text">Country Information App that fetches data from the REST Countries API and displays information about different countries</string>
     <string name="application_version">Application version: %1$s</string>
+    <string name="settings">Settings</string>
+    <string name="enable_local_storage">Enable Local Storage</string>
+    <string name="enable_favorites_feature">Enable Favorites Feature</string>
+    <string name="enable_screen_rotation">Enable Screen Rotation</string>
+    <string name="enable_favorite_countries">Enable Favorite Countries</string>
 </resources>

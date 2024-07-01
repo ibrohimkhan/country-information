@@ -1,5 +1,6 @@
 package com.kodeco.android.countryinfo.networking
 
+import com.kodeco.android.countryinfo.networking.adapters.CountryAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -11,6 +12,7 @@ const val BASE_URL = "https://restcountries.com"
 
 fun moshi() = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
+    .add(CountryAdapter())
     .build()
 
 fun buildClient(): OkHttpClient = OkHttpClient

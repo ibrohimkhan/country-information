@@ -27,19 +27,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kodeco.android.countryinfo.R
 import com.kodeco.android.countryinfo.model.Country
-import com.kodeco.android.countryinfo.model.CountryFlags
-import com.kodeco.android.countryinfo.model.CountryName
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
 
 @Composable
 fun CountryInfoRow(
     country: Country,
+    isFavoritesFeatureEnabled: Boolean,
     clickAction: (Country) -> Unit,
     onFavoriteClicked: (Country) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val unknown = stringResource(R.string.unknown)
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -55,24 +52,26 @@ fun CountryInfoRow(
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = stringResource(R.string.name, country.name.common),
+                text = stringResource(R.string.name, country.commonName),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(4.dp)
             )
             Text(
                 text = stringResource(
                     R.string.capital,
-                    country.capital?.firstOrNull() ?: unknown
+                    country.mainCapital
                 ),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(4.dp)
             )
         }
 
-        FavoriteButton(
-            country = country,
-            onFavoriteClicked = onFavoriteClicked
-        )
+        if (isFavoritesFeatureEnabled) {
+            FavoriteButton(
+                country = country,
+                onFavoriteClicked = onFavoriteClicked
+            )
+        }
     }
 }
 
@@ -111,12 +110,13 @@ fun CountryInfoRowPreview() {
     MyApplicationTheme {
         CountryInfoRow(
             country = Country(
-                name = CountryName("Tajikistan"),
-                capital = listOf("Dushanbe"),
+                commonName = "Tajikistan",
+                mainCapital = "Dushanbe",
                 population = 10_000_000,
-                area = 300_000.0,
-                flags = CountryFlags("tjk.png"),
+                area = 300_000.0f,
+                flagUrl = "tjk.png",
             ),
+            isFavoritesFeatureEnabled = true,
             clickAction = {},
             onFavoriteClicked = {},
         )
@@ -129,11 +129,11 @@ fun FavoriteButtonPreview() {
     MyApplicationTheme {
         FavoriteButton(
             country = Country(
-                name = CountryName("Tajikistan"),
-                capital = listOf("Dushanbe"),
+                commonName = "Tajikistan",
+                mainCapital = "Dushanbe",
                 population = 10_000_000,
-                area = 300_000.0,
-                flags = CountryFlags("tjk.png")
+                area = 300_000.0f,
+                flagUrl = "tjk.png",
             ),
             onFavoriteClicked = {}
         )

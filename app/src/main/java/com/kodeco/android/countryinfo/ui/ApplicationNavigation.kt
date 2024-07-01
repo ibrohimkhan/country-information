@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -33,9 +34,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.kodeco.android.countryinfo.data.db.CountriesDatabase
+import com.kodeco.android.countryinfo.data.store.CountryPrefs
+import com.kodeco.android.countryinfo.data.store.CountryPrefsImpl
 import com.kodeco.android.countryinfo.networking.buildApiService
 import com.kodeco.android.countryinfo.repository.CountryRepository
 import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
+import com.kodeco.android.countryinfo.repository.local.CountryLocalDataSourceImpl
+import com.kodeco.android.countryinfo.repository.remote.CountryRemoteDataSourceImpl
 import com.kodeco.android.countryinfo.ui.screens.Screens
 import com.kodeco.android.countryinfo.ui.screens.about.AboutScreen
 import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsScreen
@@ -44,6 +50,10 @@ import com.kodeco.android.countryinfo.ui.screens.countrydetails.CountryDetailsVi
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModel
 import com.kodeco.android.countryinfo.ui.screens.countryinfo.CountryInfoViewModelFactory
+import com.kodeco.android.countryinfo.ui.screens.settings.SettingsScreen
+import com.kodeco.android.countryinfo.ui.screens.settings.SettingsViewModel
+import com.kodeco.android.countryinfo.ui.screens.settings.SettingsViewModelFactory
+import com.kodeco.android.countryinfo.ui.screens.splash.SplashScreen
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoIntent
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoScreen
 import com.kodeco.android.countryinfo.ui.screens.tapinfo.TapInfoViewModel
@@ -54,21 +64,28 @@ import kotlinx.coroutines.delay
 const val COUNTRY_KEY = "countryName"
 
 @Composable
-fun ApplicationNavigation(repository: CountryRepository) {
+fun ApplicationNavigation(
+    countryRepository: CountryRepository,
+    countryPrefs: CountryPrefs
+) {
     val navController = rememberNavController()
 
     val countryInfoViewModel: CountryInfoViewModel = viewModel(
-        factory = CountryInfoViewModelFactory(repository)
+        factory = CountryInfoViewModelFactory(countryRepository, countryPrefs)
     )
 
     val viewModel: CountryDetailsViewModel = viewModel(
-        factory = CountryDetailsViewModelFactory(repository)
+        factory = CountryDetailsViewModelFactory(countryRepository)
     )
 
     val tapInfoViewModel: TapInfoViewModel = viewModel()
 
+    val settingsViewModel: SettingsViewModel = viewModel(
+        factory = SettingsViewModelFactory(countryPrefs)
+    )
+
     var bottomBarVisibility by rememberSaveable { mutableStateOf(false) }
-    val items = listOf(Screens.CountryList, Screens.TapInfo)
+    val items = listOf(Screens.CountryList, Screens.TapInfo, Screens.Settings)
 
     Scaffold(
         bottomBar = {
@@ -187,6 +204,14 @@ fun ApplicationNavigation(repository: CountryRepository) {
                 )
             }
 
+            composable(route = Screens.Settings.path) {
+                LaunchedEffect(null) {
+                    bottomBarVisibility = true
+                }
+
+                SettingsScreen(settingsViewModel)
+            }
+
             composable(route = Screens.TapInfo.path) {
                 LaunchedEffect(null) {
                     bottomBarVisibility = true
@@ -228,14 +253,22 @@ fun ApplicationNavigation(repository: CountryRepository) {
 @Preview(showBackground = true)
 @Composable
 fun ApplicationNavigationPreview() {
-    val repository = CountryRepositoryImpl(buildApiService())
+    val remoteDataSource = CountryRemoteDataSourceImpl(buildApiService())
+
+    val localDataSource = CountryLocalDataSourceImpl(
+        CountriesDatabase.getCountriesDatabase(LocalContext.current).countryDao()
+    )
+
+    val prefs = CountryPrefsImpl(LocalContext.current)
+
+    val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource)
 
     MyApplicationTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.White
         ) {
-            ApplicationNavigation(repository)
+            ApplicationNavigation(countryRepository, prefs)
         }
     }
 }

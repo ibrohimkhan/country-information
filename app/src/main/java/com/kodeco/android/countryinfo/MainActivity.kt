@@ -7,10 +7,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.lifecycleScope
+import com.kodeco.android.countryinfo.data.db.CountriesDatabase
+import com.kodeco.android.countryinfo.data.store.CountryPrefsImpl
 import com.kodeco.android.countryinfo.networking.buildApiService
 import com.kodeco.android.countryinfo.repository.CountryRepositoryImpl
+import com.kodeco.android.countryinfo.repository.local.CountryLocalDataSourceImpl
+import com.kodeco.android.countryinfo.repository.remote.CountryRemoteDataSourceImpl
 import com.kodeco.android.countryinfo.ui.ApplicationNavigation
 import com.kodeco.android.countryinfo.ui.theme.MyApplicationTheme
+import kotlinx.coroutines.launch
+
 
 class MainActivity : ComponentActivity() {
 
@@ -18,7 +25,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val apiService = buildApiService()
-        val repository = CountryRepositoryImpl(apiService)
+        val remoteDataSource = CountryRemoteDataSourceImpl(apiService)
+
+        val db = CountriesDatabase.getCountriesDatabase(this)
+        val localDataSource = CountryLocalDataSourceImpl(db.countryDao())
+
+        val prefs = CountryPrefsImpl(this.applicationContext)
+
+        val countryRepository = CountryRepositoryImpl(remoteDataSource, localDataSource)
+
+        lifecycleScope.launch {
+            prefs.getScreenRotationEnabled().collect { enable ->
+                requestedOrientation = if (enable) {
+                    android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER
+                } else {
+                    android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LOCKED
+                }
+            }
+        }
 
         setContent {
             MyApplicationTheme {
@@ -26,7 +50,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
                 ) {
-                    ApplicationNavigation(repository)
+                    ApplicationNavigation(countryRepository, prefs)
                 }
             }
         }
