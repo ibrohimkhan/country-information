@@ -8,9 +8,9 @@ class CountryLocalDataSourceImpl(
     private val countryDao: CountryDao
 ) : CountryLocalDataSource {
 
-    override fun getAllCountriesFlow(): Flow<List<Country>?> = countryDao.getAll()
+    override fun getAllCountriesFlow(): Flow<List<Country>> = countryDao.getAll()
 
-    override fun getFavoriteCountries(): Flow<List<Country>?> = countryDao.getFavorites()
+    override fun getFavoriteCountriesFlow(): Flow<List<Country>> = countryDao.getFavorites()
 
     override suspend fun getCountryBy(name: String): Country? = countryDao.getCountryByName(name)
 

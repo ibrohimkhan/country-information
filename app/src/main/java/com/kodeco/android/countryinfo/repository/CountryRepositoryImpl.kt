@@ -3,35 +3,27 @@ package com.kodeco.android.countryinfo.repository
 import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.repository.local.CountryLocalDataSource
 import com.kodeco.android.countryinfo.repository.remote.CountryRemoteDataSource
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class CountryRepositoryImpl(
     private val remoteDataSource: CountryRemoteDataSource,
     private val localDataSource: CountryLocalDataSource,
 ) : CountryRepository {
 
-    private val _countries = MutableStateFlow(emptyList<Country>())
-    override val countries = _countries.asStateFlow()
+    private var _countries = mutableListOf<Country>()
 
-    private var favorites = setOf<String>()
-
-    override suspend fun fetchCountries() {
+    override fun fetchCountries(): Flow<List<Country>> = flow {
         val countriesResponse = remoteDataSource.fetchCountries()
-        _countries.value = emptyList()
+        _countries.clear()
 
         if (countriesResponse.isSuccessful) {
             countriesResponse.body()?.let {
-                it.toMutableList()
-                    .map { country ->
-                        country.copy(isFavorite = favorites.contains(country.commonName))
-                    }
-
                 deleteAllCountries()
                 saveCountries(it)
+                _countries.addAll(it)
 
-                _countries.value = it
+                emit(it)
             }
         } else {
             throw Throwable("Request failed: ${countriesResponse.message()}")
@@ -44,49 +36,25 @@ class CountryRepositoryImpl(
     override suspend fun deleteAllCountries() = localDataSource
         .deleteAllCountries()
 
-    override suspend fun getCountries() {
-        _countries.value = emptyList()
-
-        localDataSource.getAllCountriesFlow()
-            .catch {
-                throw Throwable("Failed to retrieve countries: ${it.message}")
-            }
-            .collect { value ->
-                _countries.value = value ?: emptyList()
-            }
+    override fun getCountries(): Flow<List<Country>> = flow {
+        localDataSource.getAllCountriesFlow().collect {
+            _countries.clear()
+            _countries.addAll(it)
+            emit(it)
+        }
     }
 
-    override suspend fun getFavoriteCountries() {
-        _countries.value = emptyList()
-
-        localDataSource.getFavoriteCountries()
-            .catch {
-                throw Throwable("Failed to retrieve countries: ${it.message}")
-            }
-            .collect { value ->
-                _countries.value = value ?: emptyList()
-            }
+    override fun getFavoriteCountries(): Flow<List<Country>> = flow {
+        localDataSource.getFavoriteCountriesFlow().collect {
+            _countries.clear()
+            _countries.addAll(it)
+            emit(it)
+        }
     }
 
     override suspend fun updateCountry(country: Country) = localDataSource
         .updateCountry(country)
 
     override fun getCountry(name: String): Country? =
-        _countries.value.firstOrNull { country -> country.commonName == name }
-
-    override fun favorite(country: Country) {
-        favorites = if (favorites.contains(country.commonName)) {
-            favorites - country.commonName
-        } else {
-            favorites + country.commonName
-        }
-
-        val mutableCountries = _countries.value.toMutableList()
-        val index = _countries.value.indexOf(country)
-
-        mutableCountries[index] = mutableCountries[index]
-            .copy(isFavorite = favorites.contains(country.commonName))
-
-        _countries.value = mutableCountries.toList()
-    }
+        _countries.firstOrNull { country -> country.commonName == name }
 }

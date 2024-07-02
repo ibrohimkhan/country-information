@@ -19,101 +19,87 @@ sealed class UiState {
     data class Error(val throwable: Throwable) : UiState()
 
     data object Loading : UiState()
-}
 
-data class UiPrefState(
-    val enableLocalStorage: Boolean = false,
-    val enableFavoritesFeature: Boolean = false,
-    val enableFavoriteCountries: Boolean = false,
-)
+    data object Initial : UiState()
+}
 
 // Intent
 sealed class CountryInfoIntent {
     data object LoadCountries : CountryInfoIntent()
+    data object LoadFavoriteCountries : CountryInfoIntent()
+    data object LoadCountriesFromLocalStorage : CountryInfoIntent()
     data class FavoriteCountry(val country: Country) : CountryInfoIntent()
+    data class LikeAndRefresh(val country: Country) : CountryInfoIntent()
 }
 
 class CountryInfoViewModel(
     private val countryRepository: CountryRepository,
-    private val countryPrefs: CountryPrefs
+    countryPrefs: CountryPrefs
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Initial)
     val uiState = _uiState.asStateFlow()
 
-    private val _uiPrefState = MutableStateFlow(UiPrefState())
-    val uiPrefState = _uiPrefState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            countryPrefs.getLocalStorageEnabled().collect { enable ->
-                _uiPrefState.value = _uiPrefState.value.copy(enableLocalStorage = enable)
-            }
-        }
-
-        viewModelScope.launch {
-            countryPrefs.getFavoritesFeatureEnabled().collect { enable ->
-                _uiPrefState.value = _uiPrefState.value.copy(enableFavoritesFeature = enable)
-            }
-        }
-
-        viewModelScope.launch {
-            countryPrefs.getFavoriteCountriesFeatureEnabled().collect { enable ->
-                _uiPrefState.value = _uiPrefState.value.copy(enableFavoriteCountries = enable)
-            }
-        }
-
-        viewModelScope.launch {
-            countryRepository.countries
-                .catch {
-                    _uiState.value = UiState.Error(it)
-                }
-                .collect {
-                    _uiState.value = UiState.Success(it)
-                }
-        }
-
-        viewModelScope.launch {
-            delay(1000)
-            loadCountries()
-        }
-    }
+    val favoritesFeatureEnabled = countryPrefs.getFavoritesFeatureEnabled()
+    val localStorageEnabled = countryPrefs.getLocalStorageEnabled()
+    val favoriteCountriesFeatureEnabled = countryPrefs.getFavoriteCountriesFeatureEnabled()
 
     fun processIntent(intent: CountryInfoIntent) {
         viewModelScope.launch {
             when (intent) {
                 is CountryInfoIntent.LoadCountries -> loadCountries()
                 is CountryInfoIntent.FavoriteCountry -> favorite(intent.country)
+                is CountryInfoIntent.LoadFavoriteCountries -> getFavoriteCountries()
+                is CountryInfoIntent.LoadCountriesFromLocalStorage -> getCountriesFromLocalStorage()
+                is CountryInfoIntent.LikeAndRefresh -> likeAndRefresh(intent.country)
             }
         }
     }
 
     private suspend fun loadCountries() {
         _uiState.value = UiState.Loading
-
-        try {
-            if (_uiPrefState.value.enableLocalStorage) {
-                if (_uiPrefState.value.enableFavoriteCountries) {
-                    countryRepository.getFavoriteCountries()
-
-                } else {
-                    countryRepository.getCountries()
-                }
-
-            } else {
-                countryRepository.fetchCountries()
+        countryRepository.fetchCountries()
+            .catch {
+                _uiState.value = UiState.Error(it)
             }
+            .collect {
+                _uiState.value = UiState.Success(it)
+            }
+    }
 
-        } catch (e: Throwable) {
-            _uiState.value = UiState.Error(e)
-        }
+    private suspend fun getCountriesFromLocalStorage() {
+        _uiState.value = UiState.Loading
+        countryRepository.getCountries()
+            .catch {
+                _uiState.value = UiState.Error(it)
+            }
+            .collect {
+                _uiState.value = UiState.Success(it)
+            }
+    }
+
+    private suspend fun getFavoriteCountries() {
+        _uiState.value = UiState.Loading
+        countryRepository.getFavoriteCountries()
+            .catch {
+                _uiState.value = UiState.Error(it)
+            }
+            .collect {
+                _uiState.value = UiState.Success(it)
+            }
+    }
+
+    private suspend fun likeAndRefresh(country: Country) {
+        _uiState.value = UiState.Success(emptyList())
+
+        countryRepository.updateCountry(country)
+        delay(300)
+        getFavoriteCountries()
     }
 
     private fun favorite(country: Country) {
-        countryRepository.favorite(country)
-
         viewModelScope.launch {
-            countryRepository.updateCountry(country.copy(isFavorite = !country.isFavorite))
+            countryRepository.updateCountry(country)
         }
     }
 }
