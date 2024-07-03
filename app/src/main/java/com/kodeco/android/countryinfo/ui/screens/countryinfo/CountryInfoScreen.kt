@@ -25,13 +25,14 @@ fun CountryInfoScreen(
     val message = stringResource(R.string.something_went_wrong)
     val state by countryInfoViewModel.uiState.collectAsState()
 
-    val favoriteFeatureEnabled by countryInfoViewModel.favoritesFeatureEnabled.collectAsState(false)
-    val localStorageFeatureEnabled by countryInfoViewModel.localStorageEnabled.collectAsState(false)
-    val favoriteCountriesFeatureEnabled by countryInfoViewModel.favoriteCountriesFeatureEnabled.collectAsState(false)
+    val featureEnabled by countryInfoViewModel.featureEnabled.collectAsState(false)
+
+    val offlineEnabled by countryInfoViewModel.offlineEnabled.collectAsState()
+    val favoriteEnabled by countryInfoViewModel.favoriteEnabled.collectAsState()
 
     val intent = when {
-        favoriteCountriesFeatureEnabled -> CountryInfoIntent.LoadFavoriteCountries
-        localStorageFeatureEnabled -> CountryInfoIntent.LoadCountriesFromLocalStorage
+        favoriteEnabled -> CountryInfoIntent.LoadFavoriteCountries
+        offlineEnabled -> CountryInfoIntent.LoadCountriesFromLocalStorage
         else -> CountryInfoIntent.LoadCountries
     }
 
@@ -73,7 +74,7 @@ fun CountryInfoScreen(
                 countries = currentState.countries,
                 onCountryClicked = onCountryClicked,
                 onFavoriteClicked = { country ->
-                    if (favoriteCountriesFeatureEnabled) {
+                    if (favoriteEnabled) {
                         // still issue with refreshing list after like
                         countryInfoViewModel.processIntent(
                             CountryInfoIntent.LikeAndRefresh(
@@ -90,7 +91,7 @@ fun CountryInfoScreen(
                 },
                 navigateToAboutScreen = navigateToAboutScreen,
                 pullRefreshState = pullRefreshState,
-                isFavoritesFeatureEnabled = favoriteFeatureEnabled
+                isFavoritesFeatureEnabled = featureEnabled
             )
         }
     }

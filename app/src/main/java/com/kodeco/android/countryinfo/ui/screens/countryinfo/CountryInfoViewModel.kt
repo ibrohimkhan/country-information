@@ -7,8 +7,10 @@ import com.kodeco.android.countryinfo.model.Country
 import com.kodeco.android.countryinfo.repository.CountryRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
@@ -40,9 +42,19 @@ class CountryInfoViewModel(
     private val _uiState = MutableStateFlow<UiState>(UiState.Initial)
     val uiState = _uiState.asStateFlow()
 
-    val favoritesFeatureEnabled = countryPrefs.getFavoritesFeatureEnabled()
-    val localStorageEnabled = countryPrefs.getLocalStorageEnabled()
-    val favoriteCountriesFeatureEnabled = countryPrefs.getFavoriteCountriesFeatureEnabled()
+    val featureEnabled = countryPrefs.getFavoritesFeatureEnabled()
+
+    val favoriteEnabled = countryPrefs.getFavoriteCountriesFeatureEnabled().stateIn(
+        viewModelScope,
+        initialValue = false,
+        started = SharingStarted.WhileSubscribed(1000)
+    )
+
+    val offlineEnabled = countryPrefs.getLocalStorageEnabled().stateIn(
+        viewModelScope,
+        initialValue = false,
+        started = SharingStarted.WhileSubscribed(1000)
+    )
 
     fun processIntent(intent: CountryInfoIntent) {
         viewModelScope.launch {
