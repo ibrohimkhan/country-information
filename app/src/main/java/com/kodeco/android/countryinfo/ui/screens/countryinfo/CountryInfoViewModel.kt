@@ -109,9 +109,7 @@ class CountryInfoViewModel(
         getFavoriteCountries()
     }
 
-    private fun favorite(country: Country) {
-        viewModelScope.launch {
-            countryRepository.updateCountry(country)
-        }
+    private suspend fun favorite(country: Country) {
+        countryRepository.updateCountry(country)
     }
 }
