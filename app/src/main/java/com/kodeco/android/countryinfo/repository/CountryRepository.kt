@@ -4,9 +4,16 @@ import com.kodeco.android.countryinfo.model.Country
 import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
-    val countries: Flow<List<Country>>
+    // Remote datasource
+    fun fetchCountries(): Flow<List<Country>>
 
-    suspend fun fetchCountries()
+    // Local datasource
+    fun getCountries(): Flow<List<Country>>
+    fun getFavoriteCountries(): Flow<List<Country>>
+    suspend fun saveCountries(countries: List<Country>)
+    suspend fun deleteAllCountries()
+    suspend fun updateCountry(country: Country)
+
+    // Business logic
     fun getCountry(name: String): Country?
-    fun favorite(country: Country)
 }

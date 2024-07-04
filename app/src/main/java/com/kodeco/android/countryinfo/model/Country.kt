@@ -1,14 +1,26 @@
 package com.kodeco.android.countryinfo.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Parcelize
+@Entity
 data class Country(
-    val name: CountryName,
-    val capital: List<String>?,
+    @PrimaryKey
+    val commonName: String,
+
+    @ColumnInfo(name = "capital")
+    val mainCapital: String,
+
+    @ColumnInfo(name = "population")
     val population: Long,
-    val area: Double,
-    val flags: CountryFlags,
+
+    @ColumnInfo(name = "area")
+    val area: Float,
+
+    @ColumnInfo(name = "flag")
+    val flagUrl: String,
+
+    @ColumnInfo(name = "is_favorite")
     val isFavorite: Boolean = false,
-) : Parcelable
+)
